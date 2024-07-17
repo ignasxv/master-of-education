@@ -1,9 +1,11 @@
 const { SerialPort } = require("serialport");
 const { ReadlineParser } = require("@serialport/parser-readline");
 
+const PORTS = { linux:  "/dev/ttyACM0", windows: "COM3"}; 
+
 const port = new SerialPort({
-  path: "/dev/ttyACM0",
-  baudRate: 9600,
+  path: PORTS.windows ,
+  baudRate: 9600, 
   autoOpen: false,
 });
 
@@ -13,7 +15,7 @@ port.open(function (err) {
   }
 
   // Because there's no callback to write, write errors will be emitted on the port:
-  port.write("main screen turn on");
+  port.write("main screen turn on"); 
 });
 
 // The open event is always emitted
@@ -48,9 +50,12 @@ const cors = require("cors");
 
 const server = http.createServer(app);
 
+//the ports on which the App can be hosted
+const ORIGINS = ["http://localhost:4173", "http://localhost:3000"]
+
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:4173",
+        origin: ORIGINS, 
         methods: ["GET", "POST"]
     },
 });
@@ -59,15 +64,14 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
     console.log(`User Connected ${socket.id}`);
 
-    socket.on("send_message", (data) => {
-        socket.broadcast.emit("receive_message", data)
-        console.log(data);
+    socket.on("send_message", (message) => {
+        socket.broadcast.emit("receive_message", message)
+        console.log(message);
     });
 
     parser.on("data", function onData(data) {
         socket.emit("serial_data", data);
-        console.log("serial sent:", data)
-
+        console.log("serial senta:", data);
       });
 
 });

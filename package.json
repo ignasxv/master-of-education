@@ -1,0 +1,17 @@
+{
+  "name": "master-of-education",
+  "version": "1.0.0",
+  "description": "Educational Kit based on React, Arduino-Serial and Node",
+  "main": "index.js",
+  "scripts": {
+    "test": "test",
+    "server": "cd server && npm run start",
+    "client": "cd client && npm run dev"
+  
+  },
+  "author": "IgnasXV",
+  "license": "ISC",
+  "dependencies": {
+    "ttab": "^0.9.0"
+  }
+}
