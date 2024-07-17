@@ -19,18 +19,21 @@ port.open(function (err) {
 // The open event is always emitted
 port.on("open", function () {
   // open logic
-  console.log("Open");
-  console.log(SerialPort.list())
+  console.log("Serial Port: OPEN");
+
 });
 
 // Customize delimiter if needed
 const parser = port.pipe(new ReadlineParser({ delimiter: "\r\n" })); 
 
+
+// Event listener for serial data
+/*
 parser.on("data", function (data) {
   console.log(data.toString());
 
 });
-
+*/
 
 
 ///////////////////// server
@@ -47,11 +50,10 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:3000",
+        origin: "http://localhost:4173",
         methods: ["GET", "POST"]
     },
 });
-
 
 
 io.on("connection", (socket) => {
@@ -62,9 +64,10 @@ io.on("connection", (socket) => {
         console.log(data);
     });
 
-    parser.on("data", function (data) {
-        socket.emit("uppa", data);
-      
+    parser.on("data", function onData(data) {
+        socket.emit("serial_data", data);
+        console.log("serial sent:", data)
+
       });
 
 });

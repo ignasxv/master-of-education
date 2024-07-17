@@ -14,15 +14,26 @@ function App() {
   };
 
   useEffect(() => {
-    socket.on("receive_message", (data) => {
-      setMessageReceived(data.message);
+
+    console.log("Fire once");
+
+    socket.on("receive_message", (message) => {
+      console.log("received message");
+      setMessageReceived(message.message);
     });
 
-    socket.on("uppa", (data) => {
-      console.log("uppp");
+    socket.on("serial_data", (data) => {
       setPot(data);
+      console.log("serial data:", data);
+      
     });
-  }, [socket]);
+
+    return () => {
+
+    };
+
+   
+  }, []);
 
   const padd = pot + "px"
   return (
