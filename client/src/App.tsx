@@ -33,7 +33,7 @@ function App() {
     };
 
    
-  }, []);
+  }, [socket]);
 
   const padd = pot + "px"
   return (
