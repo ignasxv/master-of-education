@@ -15,8 +15,6 @@ function App() {
 
   useEffect(() => {
 
-    console.log("Fire once");
-
     socket.on("receive_message", (message) => {
       console.log("received message");
       setMessageReceived(message.message);
@@ -31,9 +29,8 @@ function App() {
     return () => {
 
     };
-
    
-  }, []);
+  }, [socket]);
 
   const padd = pot + "px"
   return (
