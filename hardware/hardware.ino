@@ -13,13 +13,13 @@ struct Readings{
   int previousVal = 0;
 };
 
+
 //Struct instances
 Button button;
 Pont pont;
 Readings readings;
 
 void setup() {
-  
   Serial.begin( 9600 );
   
 }
@@ -34,6 +34,7 @@ void updateReadings() {
   } else {
     // If neither pont nor button values have changed, keep the current reading value 
     readings.currentVal = readings.currentVal;
+    
     
   }
   

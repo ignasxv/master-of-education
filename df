@@ -1,0 +1,29 @@
+[33mcommit ccbecf8bb0415475e186bf4af2f8267964a67944[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mhardware[m[33m, [m[1;31morigin/hardware[m[33m)[m
+Author: ignasxv <igy2ignas@gmail.com>
+Date:   Wed Jul 17 21:22:43 2024 -0400
+
+    Adding hardware files
+    - hardware.io file
+
+[33mcommit a00349ebbb14974b4f29500243d4f5626fb1f11a[m
+Author: ignasxv <igy2ignas@gmail.com>
+Date:   Wed Jul 17 18:02:50 2024 -0400
+
+    Adding npm scripts
+    - Added npm script to run server from root directory
+    - Added npm script to run client from root directory
+
+[33mcommit 5ab4114e1189e159ca9d063fd360060a807283bc[m
+Author: ignasxv <igy2ignas@gmail.com>
+Date:   Wed Jul 17 14:56:30 2024 -0400
+
+    TroubleShooting MaxListenersExceededWarning
+    - Deduced what was the reason of double firing of socket.on() functions
+    - configured nodemon to start running from serial.js instead of index.js
+    - Chilled
+
+[33mcommit 61b8e0328e604b277b40d2af17eb67d5399858bb[m
+Author: ignas kamugisha <igy2ignas@gmail.com>
+Date:   Tue Jul 16 14:16:02 2024 -0400
+
+    adding reactino
