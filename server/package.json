@@ -4,7 +4,7 @@
   "description": "Master of education server",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon serial.js",
+    "server": "nodemon serial.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "IgnasXV",
