@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "test",
-    "server": "cd server && npm run start",
+    "server": "cd server && npm run server",
     "client": "cd client && npm run dev"
   },
   "author": "IgnasXV",
