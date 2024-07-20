@@ -7,6 +7,7 @@ import range from "lodash/range";
 import Latex from "react-latex-next";
 
 import "mafs/core.css";
+
 // TODO: review latex compatability issues with safari. Safari a bitch
 import "katex/dist/katex.min.css";
 

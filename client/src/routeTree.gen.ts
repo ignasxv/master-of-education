@@ -13,6 +13,7 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as LessonsPointGridImport } from './routes/lessons/PointGrid'
 
 // Create Virtual Routes
 
@@ -39,6 +40,11 @@ const LessonsMathLazyRoute = LessonsMathLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/lessons/math.lazy').then((d) => d.Route))
 
+const LessonsPointGridRoute = LessonsPointGridImport.update({
+  path: '/lessons/PointGrid',
+  getParentRoute: () => rootRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -48,6 +54,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/lessons/PointGrid': {
+      id: '/lessons/PointGrid'
+      path: '/lessons/PointGrid'
+      fullPath: '/lessons/PointGrid'
+      preLoaderRoute: typeof LessonsPointGridImport
       parentRoute: typeof rootRoute
     }
     '/lessons/math': {
@@ -71,6 +84,7 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren({
   IndexLazyRoute,
+  LessonsPointGridRoute,
   LessonsMathLazyRoute,
   LessonsPhysicsLazyRoute,
 })
@@ -84,12 +98,16 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/lessons/PointGrid",
         "/lessons/math",
         "/lessons/physics"
       ]
     },
     "/": {
       "filePath": "index.lazy.tsx"
+    },
+    "/lessons/PointGrid": {
+      "filePath": "lessons/PointGrid.tsx"
     },
     "/lessons/math": {
       "filePath": "lessons/math.lazy.tsx"
