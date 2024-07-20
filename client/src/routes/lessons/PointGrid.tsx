@@ -2,6 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Mafs, Coordinates, Point } from "mafs";
 import { useState } from "react";
 
+import "mafs/core.css";
+import "katex/dist/katex.min.css";
+
 export const Route = createFileRoute("/lessons/PointGrid")({
   component: PointGridSystem,
 });
