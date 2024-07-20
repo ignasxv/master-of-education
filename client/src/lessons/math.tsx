@@ -1,22 +1,16 @@
 import { useRef } from "react";
-import { createPortal } from "react-dom";
 
-import { createLazyFileRoute } from "@tanstack/react-router";
 import { Mafs, Plot, Point, Coordinates, useMovablePoint } from "mafs";
 import range from "lodash/range";
 import Latex from "react-latex-next";
 
-import "mafs/core.css";
+import "../assets/mafs.core.css";
 
 // TODO: review latex compatability issues with safari. Safari a bitch
 import "katex/dist/katex.min.css";
 
-export const Route = createLazyFileRoute("/lessons/math")({
-	component: MathLesson,
-});
-
 // MAYBE: refine prop types
-function PointsAlongFunction(props: any) {
+export default function PointsAlongFunction(props: any) {
 	const sep = useMovablePoint([1, 0]);
 	let { formulaContainer } = props;
 	console.log(formulaContainer);
@@ -48,16 +42,5 @@ function PointsAlongFunction(props: any) {
 				{sep.element}
 			</Mafs>
 		</>
-	);
-}
-
-function MathLesson() {
-	const formulaContainer = useRef(null);
-	return (
-		<main className="p-10">
-			<div className="flex flex-col gap-4 w-96" ref={formulaContainer}>
-				<PointsAlongFunction formulaContainer={formulaContainer} />
-			</div>
-		</main>
 	);
 }
