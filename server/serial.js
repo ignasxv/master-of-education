@@ -12,6 +12,7 @@ const port = new SerialPort({
 port.open(function (err) {
   if (err) {
     return console.log("Error opening port: ", err.message);
+    
   }
 
   // Because there's no callback to write, write errors will be emitted on the port:
@@ -71,7 +72,7 @@ io.on("connection", (socket) => {
 
     parser.on("data", function onData(data) {
         socket.emit("serial_data", data);
-        console.log("serial senta:", data);
+        console.log("", data);
       });
 
 });
