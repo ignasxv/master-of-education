@@ -13,6 +13,8 @@
   "dependencies": {
     "@tanstack/react-router": "^1.45.6",
     "@types/lodash": "^4.17.7",
+    "embla-carousel-react": "^8.1.7",
+    "js-easing-functions": "^1.0.3",
     "lodash": "^4.17.21",
     "mafs": "^0.18.8",
     "node": "^18.20.4",
