@@ -88,6 +88,8 @@ void setup() {
 
 }
 
+boolean updateReadings
+
 void loop() {  
   delay(1000);
 }
