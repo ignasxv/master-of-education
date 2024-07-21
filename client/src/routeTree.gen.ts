@@ -13,7 +13,7 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-./lessons/PointGrid
+
 // Create Virtual Routes
 
 const IndexLazyImport = createFileRoute('/')()
@@ -32,13 +32,13 @@ declare module '@tanstack/react-router' {
     '/': {
       id: '/'
       path: '/'
-      full./lessons/physics.lazy
+      fullPath: '/'
       preLoaderRoute: typeof IndexLazyImport
       parentRoute: typeof rootRoute
     }
   }
 }
-./lessons/math.lazy
+
 // Create and export the route tree
 
 export const routeTree = rootRoute.addChildren({ IndexLazyRoute })

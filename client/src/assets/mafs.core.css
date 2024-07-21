@@ -9,7 +9,7 @@
     touch-action: none;
     outline: 0;
   
-    --mafs-bg: black;
+    --mafs-bg: #18181b ;
     --mafs-fg: white;
   
     --mafs-origin-color: var(--mafs-fg);
