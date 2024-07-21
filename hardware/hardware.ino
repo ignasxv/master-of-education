@@ -1,6 +1,7 @@
 int globalCountTracker = 0;
 boolean testMode = true;
 #define BAUD_RATE 115200
+#define efficientMode false
 
 
 #define NUM_OF_BUTTONS  6
@@ -91,19 +92,37 @@ void setup() {
 }
 
 boolean updateReadings(){
-  Serial.println("Fx to update and keep track of reading changes");
-  return false;
 
- 
-  
+  boolean isChange = false;
+
+  // Serial.println("Fx to update and keep track of reading changes");
+
+  for(int i = 0; i < NUM_OF_POTMETERS; i++){
+      PontMeter* pot = &pontMeters[i];
+
+      pot->currentVal = round( analogRead(pot->pin) / 1024.4 * 100 );
+
+      if( pot->previousVal != pot->currentVal  ){
+        pot->previousVal = pot->currentVal;
+
+        if(efficientMode) Serial.println( "{" + pot->label + ":" + String(pot->currentVal) + "}");
+
+        isChange = true;
+      }
+  }
+  return isChange;
 }
 
 void printReadings(){
   
    for(int i = 0; i < NUM_OF_POTMETERS ; i++){
-    PontMeter current  = pontMeters[i];
-    Serial.println(current.pin);
-    // Serial.print("{" + current.label + ":" + String(analogRead(current.pin)) + "}" + (i + 1 < NUM_OF_POTMETERS) ? "," : "\n");
+    PontMeter* current  = &pontMeters[i];
+    // Serial.println(current.pin);
+    Serial.print( "{" + current->label + ":" + String( current->currentVal ) + "}");
+    if( i+1 < NUM_OF_POTMETERS ) 
+      Serial.print(",");
+    else 
+      Serial.println();
    }
 
 
@@ -112,6 +131,12 @@ void printReadings(){
 
 
 void loop() {  
-  printReadings();
-  delay(1000);
+  if(efficientMode){
+    updateReadings();
+  }
+  else if ( updateReadings()) { 
+    printReadings(); 
+  }
+
+  delay(100);
 }
