@@ -6,5 +6,5 @@ React + Arduino, for Master of education submission
 - [Mafs.dev](https://mafs.dev/)
 
 ## 3D asset
--    
+- [ThreeJS](https://threejs.org)
 
