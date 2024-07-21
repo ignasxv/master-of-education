@@ -1,5 +1,6 @@
 int globalCountTracker = 0;
 boolean testMode = true;
+#define BAUD_RATE 115200
 
 
 #define NUM_OF_BUTTONS  6
@@ -69,7 +70,7 @@ void resetTracker(){
 
 // The setup function
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(BAUD_RATE);
 
   // Initialize PotMeter array
   resetTracker();
@@ -90,10 +91,27 @@ void setup() {
 }
 
 boolean updateReadings(){
-  Serial.prinln("Fx to update and keep track of reading changes");
+  Serial.println("Fx to update and keep track of reading changes");
+  return false;
+
+ 
   
 }
 
+void printReadings(){
+  
+   for(int i = 0; i < NUM_OF_POTMETERS ; i++){
+    PontMeter current  = pontMeters[i];
+    Serial.println(current.pin);
+    // Serial.print("{" + current.label + ":" + String(analogRead(current.pin)) + "}" + (i + 1 < NUM_OF_POTMETERS) ? "," : "\n");
+   }
+
+
+}
+
+
+
 void loop() {  
+  printReadings();
   delay(1000);
 }
