@@ -62,6 +62,7 @@ int pontMeterPins[NUM_OF_POTMETERS] = {0, 1, 2, 3, 4, 5};
 String pontMeterLabels[NUM_OF_POTMETERS] = {"X", "Y", "Z", "A", "B", "C"};
 
 
+
 void resetTracker(){
   globalCountTracker = 0;
 }
@@ -88,7 +89,10 @@ void setup() {
 
 }
 
-boolean updateReadings
+boolean updateReadings(){
+  Serial.prinln("Fx to update and keep track of reading changes");
+  
+}
 
 void loop() {  
   delay(1000);
