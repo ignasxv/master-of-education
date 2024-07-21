@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { Mafs, Plot, Point, Coordinates, Transform, Polygon, Text, useMovablePoint, useStopwatch, Line, Theme, vec,Vector } from "mafs";
+import { Mafs, Plot, Point, Coordinates, Transform, Polygon, Text, useMovablePoint, useStopwatch, Line, Theme, vec, Vector } from "mafs";
 import { easeInOutCubic } from "js-easing-functions";
 import { sumBy, range } from "lodash";
 import Latex from "react-latex-next";
@@ -79,20 +79,21 @@ export function FancyParabola() {
 
 // ----------- BezierCurves -----------
 
-function xyFromBernsteinPolynomial(p1: vec.Vector2, c1: vec.Vector2, c2: vec.Vector2, p2: vec.Vector2, t: number) {
-	return [vec.scale(p1, -(t ** 3) + 3 * t ** 2 - 3 * t + 1), vec.scale(c1, 3 * t ** 3 - 6 * t ** 2 + 3 * t), vec.scale(c2, -3 * t ** 3 + 3 * t ** 2), vec.scale(p2, t ** 3)].reduce(vec.add, [0, 0]);
-}
-
-function inPairs<T>(arr: T[]) {
-	const pairs: [T, T][] = [];
-	for (let i = 0; i < arr.length - 1; i++) {
-		pairs.push([arr[i], arr[i + 1]]);
-	}
-
-	return pairs;
-}
 
 export function BezierCurves() {
+	function xyFromBernsteinPolynomial(p1: vec.Vector2, c1: vec.Vector2, c2: vec.Vector2, p2: vec.Vector2, t: number) {
+		return [vec.scale(p1, -(t ** 3) + 3 * t ** 2 - 3 * t + 1), vec.scale(c1, 3 * t ** 3 - 6 * t ** 2 + 3 * t), vec.scale(c2, -3 * t ** 3 + 3 * t ** 2), vec.scale(p2, t ** 3)].reduce(vec.add, [0, 0]);
+	}
+	
+	function inPairs<T>(arr: T[]) {
+		const pairs: [T, T][] = [];
+		for (let i = 0; i < arr.length - 1; i++) {
+			pairs.push([arr[i], arr[i + 1]]);
+		}
+	
+		return pairs;
+	}
+	
 	const [t, setT] = React.useState(0.5);
 	const opacity = 1 - (2 * t - 1) ** 6;
 
@@ -173,12 +174,11 @@ export function BezierCurves() {
 	);
 }
 
-interface Partition {
-	polygon: [number, number][];
-	area: number;
-}
-
 export function RiemannSum() {
+	interface Partition {
+		polygon: [number, number][];
+		area: number;
+	}
 	const maxNumPartitions = 200;
 
 	// Inputs
@@ -274,24 +274,23 @@ export function RiemannSum() {
 	);
 }
 
-
 export function Vectors() {
-  const tip = useMovablePoint([0.4, 0.6], {color:"#1EA3E3"})
+	const tip = useMovablePoint([0.4, 0.6], { color: "#1EA3E3" });
 
-  const vec1 = tip.point
-  const angle = Math.atan2(tip.y, tip.x)
-  const vec2 = vec.add(vec1, vec.rotate(vec1, angle))
-  const vec3 = vec.add(vec1, vec.rotate(vec2, -2 * angle))
+	const vec1 = tip.point;
+	const angle = Math.atan2(tip.y, tip.x);
+	const vec2 = vec.add(vec1, vec.rotate(vec1, angle));
+	const vec3 = vec.add(vec1, vec.rotate(vec2, -2 * angle));
 
-  return (
-    <Mafs height={350} viewBox={{x:[-3,3],y:[-2,2]}}>
-      <Coordinates.Cartesian />
-      <Vector tip={vec1} />
-      <Vector tail={vec1} tip={vec2} />
-      <Vector tail={vec2} tip={vec3} />
-      <Vector tip={vec3} color="#1EA3E3"/>
+	return (
+		<Mafs height={350} viewBox={{ x: [-3, 3], y: [-2, 2] }}>
+			<Coordinates.Cartesian />
+			<Vector tip={vec1} />
+			<Vector tail={vec1} tip={vec2} />
+			<Vector tail={vec2} tip={vec3} />
+			<Vector tip={vec3} color="#1EA3E3" />
 
-      {tip.element}
-    </Mafs>
-  )
+			{tip.element}
+		</Mafs>
+	);
 }
