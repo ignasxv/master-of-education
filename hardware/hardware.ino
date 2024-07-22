@@ -4,7 +4,7 @@ boolean testMode = true;
 #define efficientMode false
 
 
-#define NUM_OF_BUTTONS  6
+#define NUM_OF_BUTTONS  5
 #define NUM_OF_POTMETERS 6
 
 struct Button {
@@ -30,8 +30,8 @@ struct Button {
 
 // Button instance
 Button buttons[NUM_OF_BUTTONS]; 
-int buttonsPins[NUM_OF_BUTTONS] = {1, 2, 3, 4, 5, 6}; 
-String buttonLabels[NUM_OF_BUTTONS] = {"B1", "B2", "B3", "B4", "B5", "B6"};
+int buttonsPins[NUM_OF_BUTTONS] = {6, 4, 8, 7, 5}; 
+String buttonLabels[NUM_OF_BUTTONS] = {"B1", "B2", "B3", "B4", "B5"};
 
 
 // Pontementer object**
@@ -93,23 +93,45 @@ void setup() {
 
 boolean updateReadings(){
 
+  // tracking whether there was changes to the readings during this function call
   boolean isChange = false;
 
   // Serial.println("Fx to update and keep track of reading changes");
 
   for(int i = 0; i < NUM_OF_POTMETERS; i++){
-      PontMeter* pot = &pontMeters[i];
 
+      // updating potentiometer
+      PontMeter* pot = &pontMeters[i];
       pot->currentVal = round( analogRead(pot->pin) / 1024.0 * 100 );
 
       if( pot->previousVal != pot->currentVal  ){
         pot->previousVal = pot->currentVal;
 
-        if(efficientMode) Serial.println( "{" + pot->label + ":" + String(pot->currentVal) + "}");
+        if(efficientMode) Serial.println( "{" + pot->label + ":" + String(pot->currentVal) );
 
         isChange = true;
       }
+
   }
+
+
+  // Updating buttongs ( revisit: find ways to run this logic in the same loop with potentiometers )
+  for(int i = 0; i < NUM_OF_BUTTONS; i++){
+
+      // updating potentiometer
+      Button* btn = &buttons[i];
+      btn->currentVal = digitalRead( btn->pin ); 
+
+      if( btn->previousVal != btn->currentVal  ){
+        btn->previousVal = btn->currentVal;
+
+        if(efficientMode) Serial.println( "{" + btn->label + ":" + String(btn->currentVal) );
+
+        isChange = true;
+      }
+
+  }
+
   return isChange;
 }
 
@@ -119,7 +141,14 @@ void printReadings(){
     PontMeter* current  = &pontMeters[i];
     // Serial.println(current.pin);
     Serial.print( "{" + current->label + ":" + String( current->currentVal ) + "}");
-    if( i+1 < NUM_OF_POTMETERS ) 
+    Serial.print(",");
+   }
+
+   for(int i = 0; i < NUM_OF_BUTTONS ; i++){
+    Button* current  = &buttons[i];
+    // Serial.println(current.pin);
+    Serial.print( "{" + current->label + ":" + String( current->currentVal ) + "}");
+    if( i+1 < NUM_OF_BUTTONS ) 
       Serial.print(",");
     else 
       Serial.println();
