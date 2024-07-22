@@ -1,6 +1,5 @@
 import { createLazyFileRoute } from '@tanstack/react-router'
 
-<<<<<<< Updated upstream
 import * as io from "socket.io-client";
 
 import "./App.css";
@@ -89,3 +88,4 @@ export const Route = createLazyFileRoute('/')({
   component: () => <div>Hello /!</div>
 })
 >>>>>>> Stashed changes
+>>>>>>>>> Temporary merge branch 2
