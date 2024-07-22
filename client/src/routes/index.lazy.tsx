@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import { createLazyFileRoute } from "@tanstack/react-router";
+import { createLazyFileRoute } from '@tanstack/react-router'
 
 import * as io from "socket.io-client";
 
@@ -81,3 +80,7 @@ function App() {
 	// 	</div>
 	// );
 }
+        
+ export const Route = createLazyFileRoute('/')({
+  component: () => <div>Hello /!</div>
+})
