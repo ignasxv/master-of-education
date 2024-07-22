@@ -60,7 +60,7 @@ struct PontMeter {
 // Pontmeter instance
 PontMeter pontMeters[NUM_OF_POTMETERS];
 
-int pontMeterPins[NUM_OF_POTMETERS] = {0, 1, 2, 3, 4, 5}; 
+int pontMeterPins[NUM_OF_POTMETERS] = {1, 1, 1, 1, 1, 1}; 
 String pontMeterLabels[NUM_OF_POTMETERS] = {"X", "Y", "Z", "A", "B", "C"};
 
 
@@ -100,7 +100,7 @@ boolean updateReadings(){
   for(int i = 0; i < NUM_OF_POTMETERS; i++){
       PontMeter* pot = &pontMeters[i];
 
-      pot->currentVal = round( analogRead(pot->pin) / 1024.4 * 100 );
+      pot->currentVal = round( analogRead(pot->pin) / 1024.0 * 100 );
 
       if( pot->previousVal != pot->currentVal  ){
         pot->previousVal = pot->currentVal;
