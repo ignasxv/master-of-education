@@ -13,13 +13,10 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as LessonsPointGridImport } from './routes/lessons/PointGrid'
 
 // Create Virtual Routes
 
 const IndexLazyImport = createFileRoute('/')()
-const LessonsPhysicsLazyImport = createFileRoute('/lessons/physics')()
-const LessonsMathLazyImport = createFileRoute('/lessons/math')()
 
 // Create/Update Routes
 
@@ -27,23 +24,6 @@ const IndexLazyRoute = IndexLazyImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
-
-const LessonsPhysicsLazyRoute = LessonsPhysicsLazyImport.update({
-  path: '/lessons/physics',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() =>
-  import('./routes/lessons/physics.lazy').then((d) => d.Route),
-)
-
-const LessonsMathLazyRoute = LessonsMathLazyImport.update({
-  path: '/lessons/math',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/lessons/math.lazy').then((d) => d.Route))
-
-const LessonsPointGridRoute = LessonsPointGridImport.update({
-  path: '/lessons/PointGrid',
-  getParentRoute: () => rootRoute,
-} as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -56,38 +36,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexLazyImport
       parentRoute: typeof rootRoute
     }
-    '/lessons/PointGrid': {
-      id: '/lessons/PointGrid'
-      path: '/lessons/PointGrid'
-      fullPath: '/lessons/PointGrid'
-      preLoaderRoute: typeof LessonsPointGridImport
-      parentRoute: typeof rootRoute
-    }
-    '/lessons/math': {
-      id: '/lessons/math'
-      path: '/lessons/math'
-      fullPath: '/lessons/math'
-      preLoaderRoute: typeof LessonsMathLazyImport
-      parentRoute: typeof rootRoute
-    }
-    '/lessons/physics': {
-      id: '/lessons/physics'
-      path: '/lessons/physics'
-      fullPath: '/lessons/physics'
-      preLoaderRoute: typeof LessonsPhysicsLazyImport
-      parentRoute: typeof rootRoute
-    }
   }
 }
 
 // Create and export the route tree
 
-export const routeTree = rootRoute.addChildren({
-  IndexLazyRoute,
-  LessonsPointGridRoute,
-  LessonsMathLazyRoute,
-  LessonsPhysicsLazyRoute,
-})
+export const routeTree = rootRoute.addChildren({ IndexLazyRoute })
 
 /* prettier-ignore-end */
 
@@ -97,23 +51,11 @@ export const routeTree = rootRoute.addChildren({
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/",
-        "/lessons/PointGrid",
-        "/lessons/math",
-        "/lessons/physics"
+        "/"
       ]
     },
     "/": {
       "filePath": "index.lazy.tsx"
-    },
-    "/lessons/PointGrid": {
-      "filePath": "lessons/PointGrid.tsx"
-    },
-    "/lessons/math": {
-      "filePath": "lessons/math.lazy.tsx"
-    },
-    "/lessons/physics": {
-      "filePath": "lessons/physics.lazy.tsx"
     }
   }
 }
