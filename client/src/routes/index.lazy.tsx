@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import { createLazyFileRoute } from "@tanstack/react-router";
+import { createLazyFileRoute } from '@tanstack/react-router'
 
+<<<<<<< Updated upstream
 import * as io from "socket.io-client";
 
 import "./App.css";
@@ -88,3 +88,8 @@ function App() {
 
 
 
+=======
+export const Route = createLazyFileRoute('/')({
+  component: () => <div>Hello /!</div>
+})
+>>>>>>> Stashed changes
