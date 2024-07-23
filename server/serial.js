@@ -1,7 +1,7 @@
 const { SerialPort } = require("serialport");
 const { ReadlineParser } = require("@serialport/parser-readline");
 
-const PORTS = { linux:  "/dev/ttyACM0", windows: "COM7"}; 
+const PORTS = { linux:  "/dev/ttyACM0", windows: "COM3"}; 
 const BAUD_RATE = 9600;
 
 const port = new SerialPort({
