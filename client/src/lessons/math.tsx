@@ -6,10 +6,46 @@ import { sumBy, range } from "lodash";
 import Latex from "react-latex-next";
 
 import "../assets/mafs.core.css";
-
 // TODO: review latex compatability issues with safari. Safari a bitch
 import "katex/dist/katex.min.css";
+
+import { SerialContext } from "../app";
 import { PortalActionButtons } from "../lib/utils";
+
+export function CartesianPlane() {
+	const point = useMovablePoint([1, 1], {color:"#1EA3E3"});
+
+	const rawData=React.useContext(SerialContext)
+	console.log(rawData);
+	
+
+	return (
+		<Mafs height={350} viewBox={{ y: [0, 2], x: [-3, 5] }}>
+			<Coordinates.Cartesian />
+			<Text x={point.x} y={point.y} attach="w" attachDistance={15}>
+				({point.x.toFixed(3)}, {point.y.toFixed(3)})
+			</Text>
+			<Text x={point.x} y={point.y} attach="e" attachDistance={15}>
+				({point.x.toFixed(3)}, {point.y.toFixed(3)})
+			</Text>
+			{point.element}
+		</Mafs>
+	);
+}
+
+export function LineThroughPoints() {
+	const point1 = useMovablePoint([-2, -1], {color:"#1EA3E3"});
+	const point2 = useMovablePoint([2, 1], {color:"#1EA3E3"});
+
+	return (
+		<Mafs height={350} viewBox={{ x: [-2, 2], y: [-1, 1] }}>
+			<Coordinates.Cartesian />
+			<Line.ThroughPoints point1={point1.point} point2={point2.point} />
+			{point1.element}
+			{point2.element}
+		</Mafs>
+	);
+}
 
 // MAYBE: refine prop types
 export function TransformingParabolas(props: any) {
@@ -26,7 +62,7 @@ export function TransformingParabolas(props: any) {
 
 	const points = range(-pointsArgument * pointsArgument, (pointsArgument + 0.5) * pointsArgument, pointsArgument);
 
-	let formulaLatexString = "f(x)=" + (Math.round(Math.abs(sep.x)) > 0 ? `(x^2 + ${Math.round(sep.x)})` : "x^2") + (Math.round(Math.abs(sep.y)) > 0 ? "+" + Math.round(sep.y) : "");
+	let formulaLatexString = "f(x)=" + (Math.round(Math.abs(sep.x)) > 0 ? `(x + ${Math.round(sep.x)})^2` : "x^2") + (Math.round(Math.abs(sep.y)) > 0 ? "+" + Math.round(sep.y) : "");
 
 	return (
 		<>
@@ -79,21 +115,20 @@ export function FancyParabola() {
 
 // ----------- BezierCurves -----------
 
-
 export function BezierCurves() {
 	function xyFromBernsteinPolynomial(p1: vec.Vector2, c1: vec.Vector2, c2: vec.Vector2, p2: vec.Vector2, t: number) {
 		return [vec.scale(p1, -(t ** 3) + 3 * t ** 2 - 3 * t + 1), vec.scale(c1, 3 * t ** 3 - 6 * t ** 2 + 3 * t), vec.scale(c2, -3 * t ** 3 + 3 * t ** 2), vec.scale(p2, t ** 3)].reduce(vec.add, [0, 0]);
 	}
-	
+
 	function inPairs<T>(arr: T[]) {
 		const pairs: [T, T][] = [];
 		for (let i = 0; i < arr.length - 1; i++) {
 			pairs.push([arr[i], arr[i + 1]]);
 		}
-	
+
 		return pairs;
 	}
-	
+
 	const [t, setT] = React.useState(0.5);
 	const opacity = 1 - (2 * t - 1) ** 6;
 
