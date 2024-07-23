@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 int globalCountTracker = 0;
 boolean testMode = true;
 #define BAUD_RATE 9600
@@ -171,7 +173,7 @@ void loop() {
     printReadings(); 
   }
 
-  digitalWrite(12, buttons[0].state);
+  digitalWrite(2, buttons[0].state);
 
   delay(100);
 }
