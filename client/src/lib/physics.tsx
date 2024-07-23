@@ -68,19 +68,21 @@ export function ProjectileMotion() {
 
 				<Point x={positionAtTime(t)[0]} y={positionAtTime(t)[1]} />
 				<text x={10} y={30} fontSize={20} className="transform-to-center" fill="white">
-					t = {t.toFixed(2)}/{yVelocity > 0 ? timeOfFlight.toFixed(2) : "—"} seconds
+					t = {t.toFixed(2)}/{yVelocity > 0 ? timeOfFlight.toFixed(2) : "—"} seconds				
 				</text>
-
+				
 				{initialVelocity.element}
 			</Mafs>
 
+			
+
 			{/* These classnames are part of the Mafs docs website—they won't work for you. */}
 			<PortalActionButtons>
-				<div className="p-4 bg-black border-t border-gray-900 space-x-4">
-					<button className="bg-gray-200 text-black font-bold px-4 py-1 rounded-sm" onClick={start} disabled={yVelocity <= 0}>
+				<div className="p-4 bg-zinc-800 border-t border-primary-400 space-x-4 rounded-sm">
+					<button className=" bg-zinc-400 text-zinc-900 font-bold px-4 py-1 rounded-sm " onClick={start} disabled={yVelocity <= 0}>
 						Start
 					</button>
-					<button className="bg-gray-200 text-black font-bold px-4 py-1 rounded-sm" onClick={stop}>
+					<button className="bg-zinc-400 text-zinc-900 font-bold  px-4 py-1 rounded-sm" onClick={stop}>
 						Reset
 					</button>
 				</div>

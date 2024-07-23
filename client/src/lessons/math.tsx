@@ -64,6 +64,7 @@ export function LineThroughPoints() {
   );
 }
 
+
 // MAYBE: refine prop types
 export function TransformingParabolas(props: any) {
   const sep = useMovablePoint([1, 0], { color: "#1EA3E3" });
@@ -73,8 +74,6 @@ export function TransformingParabolas(props: any) {
   const fn = (x: number) => (x - sep.x) ** 2 + sep.y;
   const axisOfSymmetry = (x: number) => sep.x;
 
-  const n = 10;
-
   let pointsArgument = 2;
 
   const points = range(
@@ -83,7 +82,7 @@ export function TransformingParabolas(props: any) {
     pointsArgument
   );
 
-  let formulaLatexString =
+  let formulaLatexString = 
     "f(x)=" +
     (Math.round(Math.abs(sep.x)) > 0 ? `(x + ${Math.round(sep.x)})^2` : "x^2") +
     (Math.round(Math.abs(sep.y)) > 0 ? "+" + Math.round(sep.y) : "");
