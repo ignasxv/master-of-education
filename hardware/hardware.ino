@@ -1,25 +1,27 @@
 int globalCountTracker = 0;
 boolean testMode = true;
+#define BAUD_RATE 9600
+#define efficientMode false
 
 
-#define NUM_OF_BUTTONS  6
+#define NUM_OF_BUTTONS  4
 #define NUM_OF_POTMETERS 6
 
 struct Button {
-  int previousVal = 0;
-  int currentVal = 0;
+  boolean state = false;
+  int currentState = 0;
+  int lastState = 1;
   int pin;
   String label;
 
   Button() {}
 
-  Button(int pVal, int cVal, int p, String l) 
-    : previousVal(pVal), currentVal(cVal), pin(p), label(l) {
+  Button(int s, int p, String l) 
+    : state(s), pin(p), label(l) {
       // Print the constructed values in the SerialMonitor during testMode
       if (testMode) {
         Serial.println(String(globalCountTracker) + ": Button created:");
-        Serial.print("previousVal: "); Serial.println(previousVal);
-        Serial.print("currentVal: "); Serial.println(currentVal);
+        Serial.print("State: "); Serial.println(state);
         Serial.print("pin: "); Serial.println(pin);
         Serial.print("label: "); Serial.println(String(label) + "\n\n");
       }
@@ -28,8 +30,8 @@ struct Button {
 
 // Button instance
 Button buttons[NUM_OF_BUTTONS]; 
-int buttonsPins[NUM_OF_BUTTONS] = {1, 2, 3, 4, 5, 6}; 
-String buttonLabels[NUM_OF_BUTTONS] = {"B1", "B2", "B3", "B4", "B5", "B6"};
+int buttonsPins[NUM_OF_BUTTONS] = {8, 9, 10, 7}; 
+String buttonLabels[NUM_OF_BUTTONS] = {"B1", "B2", "B3", "B4"};
 
 
 // Pontementer object**
@@ -69,7 +71,7 @@ void resetTracker(){
 
 // The setup function
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(BAUD_RATE);
 
   // Initialize PotMeter array
   resetTracker();
@@ -83,17 +85,92 @@ void setup() {
   resetTracker();
   for (int i = 0; i < NUM_OF_BUTTONS ; i++) {
     globalCountTracker++;
-    buttons[i] = Button(0, 0, buttonsPins[i], buttonLabels[i]);
+    buttons[i] = Button(0, buttonsPins[i], buttonLabels[i]);
     
   }
 
 }
 
 boolean updateReadings(){
-  Serial.prinln("Fx to update and keep track of reading changes");
-  
+
+  // tracking whether there was changes to the readings during this function call
+  boolean isChange = false;
+
+  // Serial.println("Fx to update and keep track of reading changes");
+
+  for(int i = 0; i < NUM_OF_POTMETERS; i++){
+
+      // updating potentiometer
+      PontMeter* pot = &pontMeters[i];
+      pot->currentVal = round( analogRead(pot->pin) / 1024.0 * 100 );
+
+      if( pot->previousVal != pot->currentVal  ){
+        pot->previousVal = pot->currentVal;
+
+        if(efficientMode) Serial.println( "{" + pot->label + ":" + String(pot->currentVal) + "}" );
+
+        isChange = true;
+      }
+
+  }
+
+
+  // Updating buttongs ( revisit: find ways to run this logic in the same loop with potentiometers )
+  for(int i = 0; i < NUM_OF_BUTTONS; i++){
+
+      // updating potentiometer
+      Button* btn = &buttons[i];
+
+      btn->currentState = digitalRead(btn->pin);
+
+      if ( btn->currentState != btn->lastState && btn->currentState == 1 ) { 
+        btn->state = !btn->state;
+
+        if(efficientMode) Serial.println( "{" + btn->label + ":" + String(btn->state) + "}" );
+
+        isChange = true;
+      } 
+      // delay(50);
+      btn->lastState = btn->currentState;
+
+  }
+
+  return isChange;
 }
 
+void printReadings(){
+  
+   for(int i = 0; i < NUM_OF_POTMETERS ; i++){
+    PontMeter* current  = &pontMeters[i];
+    // Serial.println(current.pin);
+    Serial.print( "{" + current->label + ":" + String( current->currentVal ) + "}");
+    Serial.print(",");
+   }
+
+   for(int i = 0; i < NUM_OF_BUTTONS ; i++){
+    Button* currentBtn  = &buttons[i];
+    // Serial.println(current.pin);
+    Serial.print( "{" + currentBtn->label + ":" + String( currentBtn->state ) + "}");
+    if( i+1 < NUM_OF_BUTTONS ) 
+      Serial.print(",");
+    else 
+      Serial.println();
+   }
+
+
+}
+
+
+
 void loop() {  
-  delay(1000);
+  if(efficientMode){
+    updateReadings();
+  }
+  else if ( updateReadings()) { 
+    printReadings(); 
+  }
+
+  digitalWrite(12, buttons[0].state);
+
+  delay(100);
 }

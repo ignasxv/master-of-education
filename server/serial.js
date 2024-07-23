@@ -2,12 +2,13 @@ const { SerialPort } = require("serialport");
 const { ReadlineParser } = require("@serialport/parser-readline");
 
 const PORTS = { linux:  "/dev/ttyACM0", windows: "COM3"}; 
+const BAUD_RATE = 9600;
 
 const port = new SerialPort({
   path: PORTS.windows ,
-  baudRate: 9600, 
+  baudRate: BAUD_RATE, 
   autoOpen: false,
-});
+}); 
 
 port.open(function (err) {
   if (err) {
