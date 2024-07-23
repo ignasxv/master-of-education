@@ -8,7 +8,7 @@ import { PortalActionButtons } from "./utils";
 export function ProjectileMotion() {
 	const xSpan = 1.75;
 	const ySpan = 1.75;
-	const initialVelocity = useMovablePoint([0.5, 1.5],);
+	const initialVelocity = useMovablePoint([0.5, 1.5],{color:"#1EA3E3"});
 
 	const vectorScale = 4;
 
