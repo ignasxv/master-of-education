@@ -426,11 +426,11 @@ export function RiemannSum() {
 
 	React.useEffect(() => {
 		if (tabIndex == 0) {
-			rawData.y ? setLifyY1(parseFloat(((rawData.y / 100) * 8 - 4).toFixed(3))) : null;
+			rawData.y ? setLifyY1(parseFloat(((rawData.y / 100) * 10 - 3).toFixed(3))) : null;
 		} else if (tabIndex == 1) {
-			rawData.x ? setX2(parseFloat(((rawData.x / 100) * 30 - 15).toFixed(3))) : null;
+			rawData.x ? setX2(parseFloat(((rawData.x / 100) * 48 - 24).toFixed(3))) : null;
 		} else if (tabIndex == 2) {
-			rawData.x ? setX3(parseFloat(((rawData.x / 100) * 30 - 15).toFixed(3))) : null;
+			rawData.x ? setX3(parseFloat(((rawData.x / 100) * 48 - 24).toFixed(3))) : null;
 		}
 
 		if (rawData.b1) {
