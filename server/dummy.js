@@ -59,6 +59,7 @@ const io = new Server(server, {
 });
 
 io.on("connection", (socket) => {
+	let previousValues = {};
 	console.log(`User Connected ${socket.id}`);
 	const dummyData = readFileSync("../hardware/dummyData.txt", "utf8", (err, data) => {
 		if (err) {
@@ -71,12 +72,29 @@ io.on("connection", (socket) => {
 	serialPackets.forEach(async (packet, packetIndex) => {
 		await new Promise((resolve) => {
 			setTimeout(() => {
-                let formattedPacket={}
-                let colonPairs=packet.replaceAll("},{",",").replace("{","").replace("}","").split(",");
-                colonPairs.forEach(pair=>{
-                    let keyValuePair=pair.split(":");
-                    formattedPacket[keyValuePair[0].toLowerCase()]=parseInt(keyValuePair[1]);
-                })
+				let formattedPacket = {};
+				let colonPairs = packet.replaceAll("},{", ",").replace("{", "").replace("}", "").split(",");
+				colonPairs.forEach((pair) => {
+					let keyValuePair = pair.split(":");
+					let dataKey = keyValuePair[0].toLowerCase();
+					let dataValue = parseFloat(keyValuePair[1]);
+
+					let previousValue = previousValues[dataKey];
+					if (dataKey.length > 1) {
+						// checking if the key is a button  eg B1, B2, B3
+						if (Object.keys(previousValues).includes(dataKey)) {
+							// console.log({previousValue});
+							formattedPacket[dataKey] = dataValue != previousValue ? true : false;
+						} else {
+							formattedPacket[dataKey] = false;
+						}
+						previousValues[dataKey] = dataValue;
+					} else {
+						formattedPacket[dataKey] = parseInt(dataValue);
+					}
+				});
+				// console.log(formattedPacket);
+				console.log(previousValues.b1, formattedPacket.b1);
 				resolve(socket.emit("serial_data", JSON.stringify(formattedPacket)));
 			}, 1000 * packetIndex);
 		});

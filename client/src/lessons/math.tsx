@@ -1,8 +1,8 @@
 import * as React from "react";
 
-import { Mafs, Plot, Point, Coordinates, Transform, Polygon, Text, useMovablePoint, useStopwatch, Line, Theme, vec, Vector } from "mafs";
+import { Mafs, Plot, Point, Coordinates, Transform, Polygon, Text, useMovablePoint, MovablePoint, useStopwatch, Line, Theme, vec, Vector } from "mafs";
 import { easeInOutCubic } from "js-easing-functions";
-import { sumBy, range } from "lodash";
+import { sumBy, range, set } from "lodash";
 import Latex from "react-latex-next";
 
 import "../assets/mafs.core.css";
@@ -12,39 +12,109 @@ import "katex/dist/katex.min.css";
 import { SerialContext } from "../app";
 import { PortalActionButtons } from "../lib/utils";
 
+function handleTab(maxIndex: number, tabIndex: number, setTabIndex: (tabIndex: number) => void) {
+	const movablePointsDOMElements = document.getElementsByClassName("mafs-movable-point");
+	let targetPoint = movablePointsDOMElements[tabIndex] as HTMLElement;
+	targetPoint?.focus();
+	console.log(targetPoint);
+
+	if (tabIndex == maxIndex) {
+		setTabIndex(0);
+	} else {
+		setTabIndex(tabIndex + 1);
+	}
+}
+
 export function CartesianPlane() {
 	const rawData = React.useContext(SerialContext);
-	console.log(rawData.x);
 
-	let x1 = Math.floor((rawData.x / 100) * 2);
-	let y1 = Math.floor((rawData.y / 100) * 2);
+	// Using plain variables is esiest and most perfomant way,
+	// But to allow the point to move on mouse drag, useState is necessary
+	// let x1 = parseFloat(((rawData.x / 100 * 8) - 3).toFixed(3));
+	// let y1 = parseFloat(((rawData.y / 100 * 4) -2).toFixed(3));
 
-	console.log(x1);
+	let [x1, setX1] = React.useState(0);
+	let [y1, setY1] = React.useState(0);
 
-	const point = useMovablePoint([x1, y1], { color: "#1EA3E3" });
+	React.useEffect(() => {
+		setX1(parseFloat(((rawData.x / 100) * 8 - 3).toFixed(3)));
+		setY1(parseFloat(((rawData.y / 100) * 4 - 2).toFixed(3)));
+	}, [rawData]);
 
 	return (
-		<Mafs height={350} viewBox={{ y: [0, 2], x: [-3, 5] }}>
+		<Mafs height={350} viewBox={{ y: [-2, 2], x: [-3, 5] }}>
 			<Coordinates.Cartesian />
+			<MovablePoint
+				color="#1EA3E3"
+				point={[x1, y1]}
+				onMove={(point) => {
+					setX1(parseFloat(point[0].toFixed(3)));
+					setY1(parseFloat(point[1].toFixed(3)));
+				}}
+			/>
 			<Text x={x1} y={y1} attach="w" attachDistance={15}>
 				({x1}, {y1})
 			</Text>
-			<Point x={x1} y={y1}/>
-			{point.element}
 		</Mafs>
 	);
 }
 
 export function LineThroughPoints() {
-	const point1 = useMovablePoint([-2, -1], { color: "#1EA3E3" });
-	const point2 = useMovablePoint([2, 1], { color: "#1EA3E3" });
+	const rawData = React.useContext(SerialContext);
+
+	// mappings
+	// x, y -> (x1,y1) position of the selected movable point
+	// b1 -> Tab
+	// b2 -> Select - not working yet
+
+	//refs
+	const [tabIndex, setTabIndex] = React.useState(0);
+
+	// Using plain variables is esiest and most perfomant way,
+	// But to allow the point to move on mouse drag, useState is necessary
+	// let x1 = parseFloat(((rawData.x / 100 * 8) - 3).toFixed(3));
+	// let y1 = parseFloat(((rawData.y / 100 * 4) -2).toFixed(3));
+
+	let [x1, setX1] = React.useState(-2);
+	let [y1, setY1] = React.useState(-1);
+
+	let [x2, setX2] = React.useState(2);
+	let [y2, setY2] = React.useState(1);
+	React.useEffect(() => {
+		if (tabIndex == 0) {
+			setX1(parseFloat(((rawData.x / 100) * 20 - 10).toFixed(3)));
+			setY1(parseFloat(((rawData.y / 100) * 2 - 1).toFixed(3)));
+		} else if (tabIndex == 1) {
+			setX2(parseFloat(((rawData.x / 100) * 20 - 10).toFixed(3)));
+			setY2(parseFloat(((rawData.y / 100) * 2 - 1).toFixed(3)));
+		}
+
+		if (rawData.b1) {
+			console.log("Tab");
+			handleTab(1, tabIndex, setTabIndex);
+		}
+	}, [rawData]);
 
 	return (
-		<Mafs height={350} viewBox={{ x: [-2, 2], y: [-1, 1] }}>
+		<Mafs height={350} viewBox={{ x: [-5, 5], y: [-3, 3] }}>
 			<Coordinates.Cartesian />
-			<Line.ThroughPoints point1={point1.point} point2={point2.point} />
-			{point1.element}
-			{point2.element}
+			<Line.ThroughPoints point1={[x1, y1]} point2={[x2, y2]} />
+			<MovablePoint
+				color="#1EA3E3"
+				point={[x1, y1]}
+				onMove={(point: [number, number]) => {
+					setX1(point[0]);
+					setY1(point[1]);
+				}}
+			/>
+			<MovablePoint
+				color="#1EA3E3"
+				point={[x2, y2]}
+				onMove={(point: [number, number]) => {
+					setX2(point[0]);
+					setY2(point[1]);
+				}}
+			/>
 		</Mafs>
 	);
 }
@@ -86,31 +156,82 @@ export function TransformingParabolas(props: any) {
 }
 
 export function FancyParabola() {
-	const a = useMovablePoint([-1, 0], {
-		constrain: "horizontal",
-		color: "#1EA3E3",
-	});
-	const b = useMovablePoint([1, 0], {
-		constrain: "horizontal",
-		color: "#1EA3E3",
-	});
+	const rawData = React.useContext(SerialContext);
 
-	const k = useMovablePoint([0, -1], {
-		constrain: "vertical",
-		color: "#1EA3E3",
-	});
+	const [tabIndex, setTabIndex] = React.useState(0);
 
-	const mid = (a.x + b.x) / 2;
-	const fn = (x: number) => (x - a.x) * (x - b.x);
+	let [x1, setX1] = React.useState(-1);
+	let [y1, setY1] = React.useState(0);
+
+	let [x2, setX2] = React.useState(1);
+	let [y2, setY2] = React.useState(0);
+
+	let [x3, setX3] = React.useState(0);
+	let [y3, setY3] = React.useState(-1);
+
+	React.useEffect(() => {
+		// if (tabIndex == 0) {
+		// 	setX1(parseFloat(((rawData.x / 100) * 20 - 10).toFixed(3)));
+		// } else if (tabIndex == 1) {
+		// 	setX2(parseFloat(((rawData.x / 100) * 20 - 10).toFixed(3)));
+		// } else if (tabIndex == 2) {
+		// 	setY3(parseFloat(((rawData.y / 100) * 6 - 3).toFixed(3)));
+		// }
+
+		if (rawData.b1) {
+			console.log("Tab");
+			handleTab(2, tabIndex, setTabIndex);
+		}
+	}, [rawData]);
+
+	// const a = useMovablePoint([-1, 0], {
+	// 	constrain: "horizontal",
+	// 	color: "#1EA3E3",
+	// });
+	// const b = useMovablePoint([1, 0], {
+	// 	constrain: "horizontal",
+	// 	color: "#1EA3E3",
+	// });
+
+	// const k = useMovablePoint([0, -1], {
+	// 	constrain: "vertical",
+	// 	color: "#1EA3E3",
+	// });
+
+	const mid = (x1 + x2) / 2;
+	const fn = (x: number) => (x - x1) * (x - x2);
 
 	return (
 		<Mafs height={350}>
 			<Coordinates.Cartesian subdivisions={2} />
 
-			<Plot.OfX y={(x) => (k.y * fn(x)) / fn(mid)} />
-			{a.element}
-			{b.element}
-			<Transform translate={[(a.x + b.x) / 2, 0]}>{k.element}</Transform>
+			<Plot.OfX y={(x) => (y3 * fn(x)) / fn(mid)} />
+			<MovablePoint
+				point={[x1, y1]}
+				color="#1EA3E3"
+				onMove={(point) => {
+					setX1(point[0]);
+					setY1(point[1]);
+				}}
+			/>
+			<MovablePoint
+				point={[x3, y3]}
+				color="#1EA3E3"
+				onMove={(point) => {
+					setX2(point[0]);
+					setY2(point[1]);
+				}}
+			/>
+			<Transform translate={[(x1 + x2) / 2, 0]}>
+				<MovablePoint
+					point={[x2, y2]}
+					color="#1EA3E3"
+					onMove={(point) => {
+						setX3(point[0]);
+						setY3(point[1]);
+					}}
+				/>
+			</Transform>
 		</Mafs>
 	);
 }
@@ -118,6 +239,45 @@ export function FancyParabola() {
 // ----------- BezierCurves -----------
 
 export function BezierCurves() {
+	const rawData = React.useContext(SerialContext);
+
+	const [tabIndex, setTabIndex] = React.useState(0);
+
+	let [x1, setX1] = React.useState(-5);
+	let [y1, setY1] = React.useState(2);
+
+	let [x2, setX2] = React.useState(5);
+	let [y2, setY2] = React.useState(-2);
+
+	let [x3, setX3] = React.useState(-2);
+	let [y3, setY3] = React.useState(-3);
+
+	let [x4, setX4] = React.useState(2);
+	let [y4, setY4] = React.useState(3);
+
+	//mappings
+
+	React.useEffect(() => {
+		if (tabIndex == 0) {
+			rawData.x ? setX1(parseFloat(((rawData.x / 100) * 30 - 15).toFixed(3))) : null;
+			rawData.y ? setY1(parseFloat(((rawData.y / 100) * 8 - 4).toFixed(3))) : null;
+		} else if (tabIndex == 1) {
+			rawData.x ? setX2(parseFloat(((rawData.x / 100) * 30 - 15).toFixed(3))) : null;
+			rawData.y ? setY2(parseFloat(((rawData.y / 100) * 8 - 4).toFixed(3))) : null;
+		} else if (tabIndex == 2) {
+			rawData.x ? setX3(parseFloat(((rawData.x / 100) * 30 - 15).toFixed(3))) : null;
+			rawData.y ? setY3(parseFloat(((rawData.y / 100) * 8 - 4).toFixed(3))) : null;
+		} else if (tabIndex == 3) {
+			rawData.x ? setX4(parseFloat(((rawData.x / 100) * 30 - 15).toFixed(3))) : null;
+			rawData.y ? setY4(parseFloat(((rawData.y / 100) * 8 - 4).toFixed(3))) : null;
+		}
+
+		if (rawData.b1) {
+			console.log("Tab");
+			handleTab(3, tabIndex, setTabIndex);
+		}
+	}, [rawData]);
+
 	function xyFromBernsteinPolynomial(p1: vec.Vector2, c1: vec.Vector2, c2: vec.Vector2, p2: vec.Vector2, t: number) {
 		return [vec.scale(p1, -(t ** 3) + 3 * t ** 2 - 3 * t + 1), vec.scale(c1, 3 * t ** 3 - 6 * t ** 2 + 3 * t), vec.scale(c2, -3 * t ** 3 + 3 * t ** 2), vec.scale(p2, t ** 3)].reduce(vec.add, [0, 0]);
 	}
@@ -134,15 +294,15 @@ export function BezierCurves() {
 	const [t, setT] = React.useState(0.5);
 	const opacity = 1 - (2 * t - 1) ** 6;
 
-	const p1 = useMovablePoint([-5, 2], { color: "#1EA3E3" });
-	const p2 = useMovablePoint([5, -2], { color: "#1EA3E3" });
+	// const p1 = useMovablePoint([-5, 2], { color: "#1EA3E3" });
+	// const p2 = useMovablePoint([5, -2], { color: "#1EA3E3" });
 
-	const c1 = useMovablePoint([-2, -3], { color: "#1EA3E3" });
-	const c2 = useMovablePoint([2, 3], { color: "#1EA3E3" });
+	// const c1 = useMovablePoint([-2, -3], { color: "#1EA3E3" });
+	// const c2 = useMovablePoint([2, 3], { color: "#1EA3E3" });
 
-	const lerp1 = vec.lerp(p1.point, c1.point, t);
-	const lerp2 = vec.lerp(c1.point, c2.point, t);
-	const lerp3 = vec.lerp(c2.point, p2.point, t);
+	const lerp1 = vec.lerp([x1, y1], [x3, y3], t);
+	const lerp2 = vec.lerp([x3, y3], [x4, y4], t);
+	const lerp3 = vec.lerp([x4, y4], [x2, y2], t);
 
 	const lerp12 = vec.lerp(lerp1, lerp2, t);
 	const lerp23 = vec.lerp(lerp2, lerp3, t);
@@ -174,7 +334,16 @@ export function BezierCurves() {
 				<Coordinates.Cartesian xAxis={{ labels: false, axis: false }} yAxis={{ labels: false, axis: false }} />
 
 				{/* Control lines */}
-				{drawLineSegments([p1.point, c1.point, c2.point, p2.point], "#1EA3E3", 0.5)}
+				{drawLineSegments(
+					[
+						[x1, y1],
+						[x3, y3],
+						[x4, y4],
+						[x2, y2],
+					],
+					"#1EA3E3",
+					0.5
+				)}
 
 				{/* First-order lerps */}
 				{drawLineSegments([lerp1, lerp2, lerp3], Theme.red)}
@@ -185,7 +354,7 @@ export function BezierCurves() {
 				{drawPoints([lerp12, lerp23], Theme.yellow)}
 
 				{/* Quadratic bezier lerp  */}
-				<Plot.Parametric t={[0, t]} weight={3} xy={(t) => xyFromBernsteinPolynomial(p1.point, c1.point, c2.point, p2.point, t)} />
+				<Plot.Parametric t={[0, t]} weight={3} xy={(t) => xyFromBernsteinPolynomial([x1, y1], [x3, y3], [x4, y4], [x2, y2], t)} />
 				{/* Show remaining bezier with dashed line  */}
 				<Plot.Parametric
 					// Iterate backwards so that dashes don't move
@@ -193,15 +362,43 @@ export function BezierCurves() {
 					weight={3}
 					opacity={0.5}
 					style="dashed"
-					xy={(t) => xyFromBernsteinPolynomial(p1.point, c1.point, c2.point, p2.point, t)}
+					xy={(t) => xyFromBernsteinPolynomial([x1, y1], [x3, y3], [x4, y4], [x2, y2], t)}
 				/>
 
 				{drawPoints([lerpBezier], Theme.foreground)}
 
-				{p1.element}
-				{p2.element}
-				{c1.element}
-				{c2.element}
+				<MovablePoint
+					color="#1EA3E3"
+					point={[x1, y1]}
+					onMove={(point) => {
+						setX1(point[0]);
+						setY1(point[1]);
+					}}
+				/>
+				<MovablePoint
+					color="#1EA3E3"
+					point={[x2, y2]}
+					onMove={(point) => {
+						setX2(point[0]);
+						setY2(point[1]);
+					}}
+				/>
+				<MovablePoint
+					color="#1EA3E3"
+					point={[x3, y3]}
+					onMove={(point) => {
+						setX3(point[0]);
+						setY3(point[1]);
+					}}
+				/>
+				<MovablePoint
+					color="#1EA3E3"
+					point={[x4, y4]}
+					onMove={(point) => {
+						setX4(point[0]);
+						setY4(point[1]);
+					}}
+				/>
 			</Mafs>
 			<PortalActionButtons>
 				<span className="font-display">t =</span> <input type="range" min={0} max={1} step={0.005} value={t} onChange={(event) => setT(+event.target.value)} />
@@ -212,18 +409,50 @@ export function BezierCurves() {
 }
 
 export function RiemannSum() {
+	const rawData = React.useContext(SerialContext);
+
+	const [tabIndex, setTabIndex] = React.useState(0);
+
+	// mappings Z -> number of partitions
+
+	let [lift, setLifyY1] = React.useState(-1);
+
+	let [x2, setX2] = React.useState(1);
+
+	let [x3, setX3] = React.useState(11);
+
+	const [numPartitions, setNumPartitions] = React.useState(40);
+
+	const maxNumPartitions = 200;
+
+	React.useEffect(() => {
+		if (tabIndex == 0) {
+			rawData.y ? setLifyY1(parseFloat(((rawData.y / 100) * 8 - 4).toFixed(3))) : null;
+		} else if (tabIndex == 1) {
+			rawData.x ? setX2(parseFloat(((rawData.x / 100) * 30 - 15).toFixed(3))) : null;
+		} else if (tabIndex == 2) {
+			rawData.x ? setX3(parseFloat(((rawData.x / 100) * 30 - 15).toFixed(3))) : null;
+		}
+
+		if (rawData.b1) {
+			console.log("Tab");
+			handleTab(2, tabIndex, setTabIndex);
+		}
+
+		if (rawData.z) {
+			setNumPartitions((rawData.z / 100) * maxNumPartitions);
+		}
+	}, [rawData]);
+
 	interface Partition {
 		polygon: [number, number][];
 		area: number;
 	}
-	const maxNumPartitions = 200;
 
-	// Inputs
-	const [numPartitions, setNumPartitions] = React.useState(40);
-	const lift = useMovablePoint([0, -1], {
-		constrain: "vertical",
-		color: "#1EA3E3",
-	});
+	// const lift = useMovablePoint([0, -1], {
+	// 	constrain: "vertical",
+	// 	color: "#1EA3E3",
+	// });
 	const a = useMovablePoint([1, 0], {
 		constrain: "horizontal",
 		color: "#1EA3E3",
@@ -234,13 +463,13 @@ export function RiemannSum() {
 	});
 
 	// The function
-	const wave = (x: number) => Math.sin(3 * x) + x ** 2 / 20 - 2 + lift.y + 2;
-	const integral = (x: number) => (1 / 60) * (x ** 3 - 20 * Math.cos(3 * x)) + lift.y * x;
+	const wave = (x: number) => Math.sin(3 * x) + x ** 2 / 20 - 2 + lift + 2;
+	const integral = (x: number) => (1 / 60) * (x ** 3 - 20 * Math.cos(3 * x)) + lift * x;
 
 	// Outputs
 	const exactArea = integral(b.x) - integral(a.x);
 	const dx = (b.x - a.x) / numPartitions;
-	const partitions: Partition[] = range(a.x, b.x - dx / 2, dx).map((x) => {
+	const partitions: Partition[] = range(x2, x3 - dx / 2, dx).map((x) => {
 		const yMid = wave(x + dx / 2);
 
 		return {
@@ -298,10 +527,27 @@ export function RiemannSum() {
 				<Text attach="e" x={1.2} y={5.5} size={30}>
 					{exactArea.toFixed(4)}
 				</Text>
-
-				{lift.element}
-				{a.element}
-				{b.element}
+				<MovablePoint
+					color="#1EA3E3"
+					point={[0, lift]}
+					onMove={(point) => {
+						setLifyY1(point[1]);
+					}}
+				/>
+				<MovablePoint
+					color="#1EA3E3"
+					point={[x2, 0]}
+					onMove={(point) => {
+						setX2(point[0]);
+					}}
+				/>
+				<MovablePoint
+					color="#1EA3E3"
+					point={[x3, 0]}
+					onMove={(point) => {
+						setX3(point[0]);
+					}}
+				/>
 			</Mafs>
 
 			<PortalActionButtons>
