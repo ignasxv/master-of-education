@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 int globalCountTracker = 0;
 boolean testMode = true;
 #define BAUD_RATE 9600
@@ -30,7 +32,7 @@ struct Button {
 
 // Button instance
 Button buttons[NUM_OF_BUTTONS]; 
-int buttonsPins[NUM_OF_BUTTONS] = {8, 9, 10, 7}; 
+int buttonsPins[NUM_OF_BUTTONS] = {33, 32, 35, 34}; 
 String buttonLabels[NUM_OF_BUTTONS] = {"B1", "B2", "B3", "B4"};
 
 
@@ -60,7 +62,7 @@ struct PontMeter {
 // Pontmeter instance
 PontMeter pontMeters[NUM_OF_POTMETERS];
 
-int pontMeterPins[NUM_OF_POTMETERS] = {0, 1, 2, 3, 4, 5}; 
+int pontMeterPins[NUM_OF_POTMETERS] = {13, 12, 14, 27, 26, 25}; 
 String pontMeterLabels[NUM_OF_POTMETERS] = {"X", "Y", "Z", "A", "B", "C"};
 
 
@@ -86,6 +88,7 @@ void setup() {
   for (int i = 0; i < NUM_OF_BUTTONS ; i++) {
     globalCountTracker++;
     buttons[i] = Button(0, buttonsPins[i], buttonLabels[i]);
+    pinMode(buttonsPins[i],INPUT);
     
   }
 
@@ -102,7 +105,7 @@ boolean updateReadings(){
 
       // updating potentiometer
       PontMeter* pot = &pontMeters[i];
-      pot->currentVal = round( analogRead(pot->pin) / 1024.0 * 100 );
+      pot->currentVal = round( analogRead(pot->pin) / 4096.0 * 100 );
 
       if( pot->previousVal != pot->currentVal  ){
         pot->previousVal = pot->currentVal;
@@ -170,7 +173,7 @@ void loop() {
     printReadings(); 
   }
 
-  digitalWrite(12, buttons[0].state);
+  digitalWrite(2, buttons[0].state);
 
   delay(100);
 }
