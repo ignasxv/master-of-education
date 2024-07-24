@@ -1,10 +1,10 @@
 const { SerialPort } = require("serialport");
 const { ReadlineParser } = require("@serialport/parser-readline");
 
-const PORTS = { linux:  "/dev/ttyACM0", windows: "COM7"}; 
+const PORTS = { linux:  "/dev/ttyACM0", windows: "COM3"}; 
 const BAUD_RATE = 9600;
 
-const port = new SerialPort({
+const port = new SerialPort({ 
   path: PORTS.windows ,
   baudRate: BAUD_RATE, 
   autoOpen: false,
@@ -32,12 +32,12 @@ const parser = port.pipe(new ReadlineParser({ delimiter: "\r\n" }));
 
 
 // Event listener for serial data
-/*
+
 parser.on("data", function (data) {
   console.log(data.toString());
 
 });
-*/
+
 
 
 ///////////////////// server
