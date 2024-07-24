@@ -1,5 +1,6 @@
 const { SerialPort } = require("serialport");
 const { ReadlineParser } = require("@serialport/parser-readline");
+const { readFileSync } = require("fs");
 
 const PORTS = { linux: "/dev/ttyACM0", windows: "COM3" };
 const BAUD_RATE = 9600;
@@ -29,7 +30,7 @@ port.on("open", function () {
 const parser = port.pipe(new ReadlineParser({ delimiter: "\r\n" }));
 
 // Event listener for serial data
-
+/*
 parser.on("data", function (data) {
   console.log(data.toString());
 
@@ -59,41 +60,44 @@ const io = new Server(server, {
 
 io.on("connection", (socket) => {
 	let previousValues = {};
-
 	console.log(`User Connected ${socket.id}`);
-
-	socket.on("send_message", (message) => {
-		socket.broadcast.emit("receive_message", message);
-		console.log(message);
+	const dummyData = readFileSync("../hardware/dummyData.txt", "utf8", (err, data) => {
+		if (err) {
+			console.log(err);
+		}
 	});
 
-	parser.on("data", function onData(data) {
-		let formattedPacket = {};
-		let colonPairs = data.replaceAll("},{", ",").replace("{", "").replace("}", "").split(",");
-		colonPairs.forEach((pair) => {
-			let keyValuePair = pair.split(":");
-			let dataKey = keyValuePair[0].toLowerCase();
-			let dataValue = parseFloat(keyValuePair[1]);
+	let serialPackets = dummyData.split("\r\n");
 
-			let previousValue = previousValues[dataKey];
-			if (dataKey.length > 1) {
-				// checking if the key is a button  eg B1, B2, B3
-				if (Object.keys(previousValues).includes(dataKey)) {
-					// console.log({previousValue});
-					formattedPacket[dataKey] = dataValue != previousValue ? true : false;
-				} else {
-					formattedPacket[dataKey] = false;
-				}
-				previousValues[dataKey] = dataValue;
-			} else {
-				formattedPacket[dataKey] = parseInt(dataValue);
-			}
+	serialPackets.forEach(async (packet, packetIndex) => {
+		await new Promise((resolve) => {
+			setTimeout(() => {
+				let formattedPacket = {};
+				let colonPairs = packet.replaceAll("},{", ",").replace("{", "").replace("}", "").split(",");
+				colonPairs.forEach((pair) => {
+					let keyValuePair = pair.split(":");
+					let dataKey = keyValuePair[0].toLowerCase();
+					let dataValue = parseFloat(keyValuePair[1]);
+
+					let previousValue = previousValues[dataKey];
+					if (dataKey.length > 1) {
+						// checking if the key is a button  eg B1, B2, B3
+						if (Object.keys(previousValues).includes(dataKey)) {
+							// console.log({previousValue});
+							formattedPacket[dataKey] = dataValue != previousValue ? true : false;
+						} else {
+							formattedPacket[dataKey] = false;
+						}
+						previousValues[dataKey] = dataValue;
+					} else {
+						formattedPacket[dataKey] = parseInt(dataValue);
+					}
+				});
+				// console.log(formattedPacket);
+				console.log(previousValues.b1, formattedPacket.b1);
+				resolve(socket.emit("serial_data", JSON.stringify(formattedPacket)));
+			}, 1000 * packetIndex);
 		});
-		// console.log(formattedPacket);
-		// console.log(previousValues.b1, formattedPacket.b1);
-		resolve(socket.emit("serial_data", JSON.stringify(formattedPacket)));
-		socket.emit("serial_data", data);
-		console.log("", data);
 	});
 });
 
