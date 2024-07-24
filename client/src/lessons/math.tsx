@@ -160,22 +160,19 @@ export function FancyParabola() {
 	const [tabIndex, setTabIndex] = React.useState(0);
 
 	let [x1, setX1] = React.useState(-1);
-	let [y1, setY1] = React.useState(0);
 
 	let [x2, setX2] = React.useState(1);
-	let [y2, setY2] = React.useState(0);
 
-	let [x3, setX3] = React.useState(0);
 	let [y3, setY3] = React.useState(-1);
 
 	React.useEffect(() => {
-		// if (tabIndex == 0) {
-		// 	setX1(parseFloat(((rawData.x / 100) * 20 - 10).toFixed(3)));
-		// } else if (tabIndex == 1) {
-		// 	setX2(parseFloat(((rawData.x / 100) * 20 - 10).toFixed(3)));
-		// } else if (tabIndex == 2) {
-		// 	setY3(parseFloat(((rawData.y / 100) * 6 - 3).toFixed(3)));
-		// }
+		if (tabIndex == 0) {
+			setX1(parseFloat(((rawData.x / 100) * 20 - 10).toFixed(3)));
+		} else if (tabIndex == 1) {
+			setX2(parseFloat(((rawData.x / 100) * 20 - 10).toFixed(3)));
+		} else if (tabIndex == 2) {
+			setY3(parseFloat(((rawData.y / 100) * 6 - 3).toFixed(3)));
+		}
 
 		if (rawData.b1) {
 			console.log("Tab");
@@ -206,27 +203,24 @@ export function FancyParabola() {
 
 			<Plot.OfX y={(x) => (y3 * fn(x)) / fn(mid)} />
 			<MovablePoint
-				point={[x1, y1]}
+				point={[x1,0]}
 				color="#1EA3E3"
 				onMove={(point) => {
 					setX1(point[0]);
-					setY1(point[1]);
 				}}
 			/>
 			<MovablePoint
-				point={[x3, y3]}
+				point={[x2, 0]}
 				color="#1EA3E3"
 				onMove={(point) => {
 					setX2(point[0]);
-					setY2(point[1]);
 				}}
 			/>
 			<Transform translate={[(x1 + x2) / 2, 0]}>
 				<MovablePoint
-					point={[x2, y2]}
+					point={[0, y3]}
 					color="#1EA3E3"
 					onMove={(point) => {
-						setX3(point[0]);
 						setY3(point[1]);
 					}}
 				/>
