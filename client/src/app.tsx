@@ -6,7 +6,7 @@ import { CartesianPlane, LineThroughPoints, FancyParabola, BezierCurves, Riemann
 import { ProjectileMotion } from "./lib/physics";
 
 const socket = io.connect("http://localhost:3001");
-export const SerialContext = createContext({});
+export const SerialContext = createContext({x:0, y:0, a:1, b:1});
 
 interface lessonType {
 	name: string;
@@ -59,7 +59,7 @@ const lessons: lessonType[] = [
 
 export default function () {
 	let [currentLesson, setCurrentLesson] = useState<number>(0);
-	let [rawData, setRawData] = useState<any>(null);
+	let [rawData, setRawData] = useState<any>({x:0, y:0, a:1, b:1});
 	useEffect(() => {
 		socket.on("serial_data", (data) => {
 			setRawData(JSON.parse(data));

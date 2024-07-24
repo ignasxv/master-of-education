@@ -13,29 +13,31 @@ import { SerialContext } from "../app";
 import { PortalActionButtons } from "../lib/utils";
 
 export function CartesianPlane() {
-	const point = useMovablePoint([1, 1], {color:"#1EA3E3"});
+	const rawData = React.useContext(SerialContext);
+	console.log(rawData.x);
 
-	const rawData=React.useContext(SerialContext)
-	console.log(rawData);
-	
+	let x1 = Math.floor((rawData.x / 100) * 2);
+	let y1 = Math.floor((rawData.y / 100) * 2);
+
+	console.log(x1);
+
+	const point = useMovablePoint([x1, y1], { color: "#1EA3E3" });
 
 	return (
 		<Mafs height={350} viewBox={{ y: [0, 2], x: [-3, 5] }}>
 			<Coordinates.Cartesian />
-			<Text x={point.x} y={point.y} attach="w" attachDistance={15}>
-				({point.x.toFixed(3)}, {point.y.toFixed(3)})
+			<Text x={x1} y={y1} attach="w" attachDistance={15}>
+				({x1}, {y1})
 			</Text>
-			<Text x={point.x} y={point.y} attach="e" attachDistance={15}>
-				({point.x.toFixed(3)}, {point.y.toFixed(3)})
-			</Text>
+			<Point x={x1} y={y1}/>
 			{point.element}
 		</Mafs>
 	);
 }
 
 export function LineThroughPoints() {
-	const point1 = useMovablePoint([-2, -1], {color:"#1EA3E3"});
-	const point2 = useMovablePoint([2, 1], {color:"#1EA3E3"});
+	const point1 = useMovablePoint([-2, -1], { color: "#1EA3E3" });
+	const point2 = useMovablePoint([2, 1], { color: "#1EA3E3" });
 
 	return (
 		<Mafs height={350} viewBox={{ x: [-2, 2], y: [-1, 1] }}>
