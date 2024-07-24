@@ -1,10 +1,19 @@
 // #include <Arduino.h>
+#include <math.h>
+
 
 int globalCountTracker = 0;
 boolean testMode = true;
 #define BAUD_RATE 9600
 #define efficientMode false
 
+struct Bound{
+  const float s_lower = -50.00; 
+  const float s_upper = 50.00;
+  const float r_lower = 0.00;
+  const float r_upper = 1024.0;
+};
+Bound bound; 
 
 #define NUM_OF_BUTTONS  4
 #define NUM_OF_POTMETERS 6
@@ -38,14 +47,14 @@ String buttonLabels[NUM_OF_BUTTONS] = {"B1", "B2", "B3", "B4"};
 
 // Pontementer object**
 struct PontMeter {
-  int previousVal = 0;
-  int currentVal = 0;
+  float previousVal = 0;
+  float currentVal = 0;
   int pin;
   String label;
 
   PontMeter() {}
 
-  PontMeter(int pVal, int cVal, int p, String l) 
+  PontMeter(float pVal, float cVal, int p, String l) 
     : previousVal(pVal), currentVal(cVal), pin(p), label(l) {
 
       // Print the constructed values in the SerialMonitor during testMode
@@ -70,6 +79,11 @@ String pontMeterLabels[NUM_OF_POTMETERS] = {"X", "Y", "Z", "A", "B", "C"};
 void resetTracker(){
   globalCountTracker = 0;
 }
+
+float mapToRange(float value, float fromLow, float fromHigh, float toLow, float toHigh) {
+    return (value - fromLow) * (toHigh - toLow) / (fromHigh - fromLow) + toLow;
+}
+
 
 // The setup function
 void setup() {
@@ -106,13 +120,13 @@ boolean updateReadings(){
 
       // updating potentiometer
       PontMeter* pot = &pontMeters[i];
-      pot->currentVal = round( analogRead(pot->pin) / 1024.0 * 50 );
+      // pot->currentVal = analogRead(pot->pin)*100;
+      pot->currentVal = map( analogRead(pot->pin), bound.r_lower, bound.r_upper, bound.s_lower, bound.s_upper );
 
       if( pot->previousVal != pot->currentVal  ){
         pot->previousVal = pot->currentVal;
 
-        if(efficientMode) Serial.println( "{" + pot->label + ":" + String(pot->currentVal) + "}" );
-
+        if(efficientMode) Serial.println( "{" + pot->label + ":" + String( pot->currentVal ) + "}" );
         isChange = true;
       }
 
