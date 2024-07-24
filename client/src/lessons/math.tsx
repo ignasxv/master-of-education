@@ -2,8 +2,7 @@ import * as React from "react";
 
 import { Mafs, Plot, Point, Coordinates, Transform, Polygon, Text, useMovablePoint, MovablePoint, useStopwatch, Line, Theme, vec, Vector } from "mafs";
 import { easeInOutCubic } from "js-easing-functions";
-import { sumBy, range, set } from "lodash";
-import Latex from "react-latex-next";
+import { sumBy, range } from "lodash";
 
 import "../assets/mafs.core.css";
 // TODO: review latex compatability issues with safari. Safari a bitch
@@ -120,40 +119,40 @@ export function LineThroughPoints() {
 }
 
 // MAYBE: refine prop types
-export function TransformingParabolas(props: any) {
-	const sep = useMovablePoint([1, 0], { color: "#1EA3E3" });
-	let { formulaContainer } = props;
-	console.log(formulaContainer);
+// export function TransformingParabolas(props: any) {
+// 	const sep = useMovablePoint([1, 0], { color: "#1EA3E3" });
+// 	let { formulaContainer } = props;
+// 	console.log(formulaContainer);
 
-	const fn = (x: number) => (x - sep.x) ** 2 + sep.y;
-	const axisOfSymmetry = (x: number) => sep.x;
+// 	const fn = (x: number) => (x - sep.x) ** 2 + sep.y;
+// 	const axisOfSymmetry = (x: number) => sep.x;
 
-	const n = 10;
+// 	const n = 10;
 
-	let pointsArgument = 2;
+// 	let pointsArgument = 2;
 
-	const points = range(-pointsArgument * pointsArgument, (pointsArgument + 0.5) * pointsArgument, pointsArgument);
+// 	const points = range(-pointsArgument * pointsArgument, (pointsArgument + 0.5) * pointsArgument, pointsArgument);
 
-	let formulaLatexString = "f(x)=" + (Math.round(Math.abs(sep.x)) > 0 ? `(x + ${Math.round(sep.x)})^2` : "x^2") + (Math.round(Math.abs(sep.y)) > 0 ? "+" + Math.round(sep.y) : "");
+// 	let formulaLatexString = "f(x)=" + (Math.round(Math.abs(sep.x)) > 0 ? `(x + ${Math.round(sep.x)})^2` : "x^2") + (Math.round(Math.abs(sep.y)) > 0 ? "+" + Math.round(sep.y) : "");
 
-	return (
-		<>
-			<Latex>${formulaLatexString}$</Latex>
-			<Mafs zoom={false} height={350} viewBox={{ x: [-6, 6], y: [0, 5] }}>
-				{/* Tried using the provided LaTeX component (from Mafs) but it must render inside the graph which is too limiting */}
-				{/* <LaTeX at={[-4, 2]} tex={`f(x)=${sep.x > 0 ? "(x^2+" + Math.round(sep.x)+")" : "x^2"}+1`} /> */}
-				<Coordinates.Cartesian xAxis={{ lines: false }} yAxis={{ lines: false }} />
+// 	return (
+// 		<>
+// 			<Latex>${formulaLatexString}$</Latex>
+// 			<Mafs zoom={false} height={350} viewBox={{ x: [-6, 6], y: [0, 5] }}>
+// 				{/* Tried using the provided LaTeX component (from Mafs) but it must render inside the graph which is too limiting */}
+// 				{/* <LaTeX at={[-4, 2]} tex={`f(x)=${sep.x > 0 ? "(x^2+" + Math.round(sep.x)+")" : "x^2"}+1`} /> */}
+// 				<Coordinates.Cartesian xAxis={{ lines: false }} yAxis={{ lines: false }} />
 
-				<Plot.OfX y={fn} opacity={0.25} />
-				<Plot.OfY x={axisOfSymmetry} style="dashed" opacity={0.25} />
-				{/* {points.map((x, index) => (
-				<Point x={x} y={fn(x)} key={index} />
-			))} */}
-				{sep.element}
-			</Mafs>
-		</>
-	);
-}
+// 				<Plot.OfX y={fn} opacity={0.25} />
+// 				<Plot.OfY x={axisOfSymmetry} style="dashed" opacity={0.25} />
+// 				{/* {points.map((x, index) => (
+// 				<Point x={x} y={fn(x)} key={index} />
+// 			))} */}
+// 				{sep.element}
+// 			</Mafs>
+// 		</>
+// 	);
+// }
 
 export function FancyParabola() {
 	const rawData = React.useContext(SerialContext);

@@ -1,7 +1,5 @@
 import * as React from "react";
-import { createPortal } from "react-dom";
-
-import { Mafs, useStopwatch, Point, useMovablePoint, MovablePoint, Plot, Coordinates, Text, Vector, Polygon } from "mafs";
+import { Mafs, useStopwatch, Point, MovablePoint, Plot, Vector, Polygon } from "mafs";
 
 import { SerialContext } from "../app";
 import { PortalActionButtons } from "./utils";

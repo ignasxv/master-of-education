@@ -2,7 +2,7 @@ import { useState, useEffect, createContext } from "react";
 import * as io from "socket.io-client";
 import useEmblaCarousel from "embla-carousel-react";
 
-import { CartesianPlane, TransformingParabolas, LineThroughPoints, FancyParabola, BezierCurves, RiemannSum, Vectors } from "./lessons/math";
+import { CartesianPlane, LineThroughPoints, FancyParabola, BezierCurves, RiemannSum } from "./lessons/math";
 import { ProjectileMotion } from "./lib/physics";
 
 const socket = io.connect("http://localhost:3001");
