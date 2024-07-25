@@ -3,13 +3,14 @@ import * as React from "react";
 import { Mafs, Plot, Point, Coordinates, Transform, Polygon, Text, useMovablePoint, MovablePoint, useStopwatch, Line, Theme, vec, Vector } from "mafs";
 import { easeInOutCubic } from "js-easing-functions";
 import { sumBy, range } from "lodash";
+import LaTeX from "@matejmazur/react-katex";
 
 import "../assets/mafs.core.css";
 // TODO: review latex compatability issues with safari. Safari a bitch
 import "katex/dist/katex.min.css";
 
 import { SerialContext } from "../app";
-import { PortalActionButtons } from "../lib/utils";
+import { PortalActionButtons, findLineEquation, findQuadraticEquation } from "../lib/utils";
 
 function handleTab(maxIndex: number, tabIndex: number, setTabIndex: (tabIndex: number) => void) {
 	const movablePointsDOMElements = document.getElementsByClassName("mafs-movable-point");
@@ -60,6 +61,7 @@ export function CartesianPlane() {
 
 export function LineThroughPoints() {
 	const rawData = React.useContext(SerialContext);
+	const [previousValue, setPreviousValue] = React.useState({ x: 0, y: 0 });
 
 	// mappings
 	// x, y -> (x1,y1) position of the selected movable point
@@ -89,9 +91,11 @@ export function LineThroughPoints() {
 				setY2(parseFloat(((rawData.y / 100) * 2 - 1).toFixed(3)));
 			}
 
-		if (rawData.b1) {
-			console.log("Tab");
-			handleTab(1, tabIndex, setTabIndex);
+			if (rawData.b1) {
+				console.log("Tab");
+				handleTab(1, tabIndex, setTabIndex);
+			}
+			setPreviousValue({ x: rawData.x, y: rawData.y });
 		}
 	}, [rawData]);
 
@@ -100,26 +104,29 @@ export function LineThroughPoints() {
 	}, []);
 
 	return (
-		<Mafs height={350} viewBox={{ x: [-5, 5], y: [-3, 3] }}>
-			<Coordinates.Cartesian />
-			<Line.ThroughPoints point1={[x1, y1]} point2={[x2, y2]} />
-			<MovablePoint
-				color="#1EA3E3"
-				point={[x1, y1]}
-				onMove={(point: [number, number]) => {
-					setX1(point[0]);
-					setY1(point[1]);
-				}}
-			/>
-			<MovablePoint
-				color="#1EA3E3"
-				point={[x2, y2]}
-				onMove={(point: [number, number]) => {
-					setX2(point[0]);
-					setY2(point[1]);
-				}}
-			/>
-		</Mafs>
+		<>
+			<LaTeX>{findLineEquation({ x: x1, y: y1 }, { x: x2, y: y2 })}</LaTeX>
+			<Mafs height={350} viewBox={{ x: [-5, 5], y: [-3, 3] }}>
+				<Coordinates.Cartesian />
+				<Line.ThroughPoints point1={[x1, y1]} point2={[x2, y2]} />
+				<MovablePoint
+					color="#1EA3E3"
+					point={[x1, y1]}
+					onMove={(point: [number, number]) => {
+						setX1(point[0]);
+						setY1(point[1]);
+					}}
+				/>
+				<MovablePoint
+					color="#1EA3E3"
+					point={[x2, y2]}
+					onMove={(point: [number, number]) => {
+						setX2(point[0]);
+						setY2(point[1]);
+					}}
+				/>
+			</Mafs>
+		</>
 	);
 }
 
@@ -161,6 +168,7 @@ export function LineThroughPoints() {
 
 export function FancyParabola() {
 	const rawData = React.useContext(SerialContext);
+	const [previousValue, setPreviousValue] = React.useState({ x: 0, y: 0 });
 
 	const [tabIndex, setTabIndex] = React.useState(0);
 
@@ -180,9 +188,11 @@ export function FancyParabola() {
 				setY3(parseFloat(((rawData.y / 100) * 6 - 3).toFixed(3)));
 			}
 
-		if (rawData.b1) {
-			console.log("Tab");
-			handleTab(2, tabIndex, setTabIndex);
+			if (rawData.b1) {
+				console.log("Tab");
+				handleTab(2, tabIndex, setTabIndex);
+			}
+			setPreviousValue({ x: rawData.x, y: rawData.y });
 		}
 	}, [rawData]);
 
@@ -208,34 +218,37 @@ export function FancyParabola() {
 	const fn = (x: number) => (x - x1) * (x - x2);
 
 	return (
-		<Mafs height={350}>
-			<Coordinates.Cartesian subdivisions={2} />
+		<>
+			<LaTeX>{findQuadraticEquation(x1, x2, { y: y3 })}</LaTeX>
+			<Mafs height={350}>
+				<Coordinates.Cartesian subdivisions={2} />
 
-			<Plot.OfX y={(x) => (y3 * fn(x)) / fn(mid)} />
-			<MovablePoint
-				point={[x1,0]}
-				color="#1EA3E3"
-				onMove={(point) => {
-					setX1(point[0]);
-				}}
-			/>
-			<MovablePoint
-				point={[x2, 0]}
-				color="#1EA3E3"
-				onMove={(point) => {
-					setX2(point[0]);
-				}}
-			/>
-			<Transform translate={[(x1 + x2) / 2, 0]}>
+				<Plot.OfX y={(x) => (y3 * fn(x)) / fn(mid)} />
 				<MovablePoint
-					point={[0, y3]}
+					point={[x1, 0]}
 					color="#1EA3E3"
 					onMove={(point) => {
-						setY3(point[1]);
+						setX1(point[0]);
 					}}
 				/>
-			</Transform>
-		</Mafs>
+				<MovablePoint
+					point={[x2, 0]}
+					color="#1EA3E3"
+					onMove={(point) => {
+						setX2(point[0]);
+					}}
+				/>
+				<Transform translate={[(x1 + x2) / 2, 0]}>
+					<MovablePoint
+						point={[0, y3]}
+						color="#1EA3E3"
+						onMove={(point) => {
+							setY3(point[1]);
+						}}
+					/>
+				</Transform>
+			</Mafs>
+		</>
 	);
 }
 
@@ -243,6 +256,7 @@ export function FancyParabola() {
 
 export function BezierCurves() {
 	const rawData = React.useContext(SerialContext);
+	const [previousValue, setPreviousValue] = React.useState({ x: 0, y: 0 });
 
 	const [tabIndex, setTabIndex] = React.useState(0);
 
@@ -276,9 +290,11 @@ export function BezierCurves() {
 				rawData.y ? setY4(parseFloat(((rawData.y / 100) * 8 - 4).toFixed(3))) : null;
 			}
 
-		if (rawData.b1) {
-			console.log("Tab");
-			handleTab(3, tabIndex, setTabIndex);
+			if (rawData.b1) {
+				console.log("Tab");
+				handleTab(3, tabIndex, setTabIndex);
+			}
+			setPreviousValue({ x: rawData.x, y: rawData.y });
 		}
 	}, [rawData]);
 
@@ -418,6 +434,7 @@ export function BezierCurves() {
 
 export function RiemannSum() {
 	const rawData = React.useContext(SerialContext);
+	const [previousValue, setPreviousValue] = React.useState({ x: 0, y: 0 });
 
 	const [tabIndex, setTabIndex] = React.useState(0);
 
@@ -443,13 +460,15 @@ export function RiemannSum() {
 				rawData.x ? setX3(parseFloat(((rawData.x / 100) * 48 - 24).toFixed(3))) : null;
 			}
 
-		if (rawData.b1) {
-			console.log("Tab");
-			handleTab(2, tabIndex, setTabIndex);
-		}
+			if (rawData.b1) {
+				console.log("Tab");
+				handleTab(2, tabIndex, setTabIndex);
+			}
 
-		if (rawData.z) {
-			setNumPartitions((rawData.z / 100) * maxNumPartitions);
+			if (rawData.z) {
+				setNumPartitions((rawData.z / 100) * maxNumPartitions);
+			}
+			setPreviousValue({ x: rawData.x, y: rawData.y });
 		}
 	}, [rawData]);
 
