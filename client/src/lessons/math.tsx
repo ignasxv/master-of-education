@@ -3,14 +3,13 @@ import * as React from "react";
 import { Mafs, Plot, Point, Coordinates, Transform, Polygon, Text, useMovablePoint, MovablePoint, useStopwatch, Line, Theme, vec, Vector } from "mafs";
 import { easeInOutCubic } from "js-easing-functions";
 import { sumBy, range } from "lodash";
-import LaTeX from "@matejmazur/react-katex";
 
 import "../assets/mafs.core.css";
 // TODO: review latex compatability issues with safari. Safari a bitch
 import "katex/dist/katex.min.css";
 
 import { SerialContext } from "../app";
-import { PortalActionButtons, findLineEquation, findQuadraticEquation } from "../lib/utils";
+import { PortalActionButtons } from "../lib/utils";
 
 function handleTab(maxIndex: number, tabIndex: number, setTabIndex: (tabIndex: number) => void) {
 	const movablePointsDOMElements = document.getElementsByClassName("mafs-movable-point");
@@ -61,7 +60,6 @@ export function CartesianPlane() {
 
 export function LineThroughPoints() {
 	const rawData = React.useContext(SerialContext);
-	const [previousValue, setPreviousValue] = React.useState({ x: 0, y: 0 });
 
 	// mappings
 	// x, y -> (x1,y1) position of the selected movable point
@@ -82,47 +80,41 @@ export function LineThroughPoints() {
 	let [x2, setX2] = React.useState(2);
 	let [y2, setY2] = React.useState(1);
 	React.useEffect(() => {
-		if (previousValue.x != rawData.x && previousValue.y != rawData.y) {
-			if (tabIndex == 0) {
-				setX1(parseFloat(((rawData.x / 100) * 20 - 10).toFixed(3)));
-				setY1(parseFloat(((rawData.y / 100) * 2 - 1).toFixed(3)));
-			} else if (tabIndex == 1) {
-				setX2(parseFloat(((rawData.x / 100) * 20 - 10).toFixed(3)));
-				setY2(parseFloat(((rawData.y / 100) * 2 - 1).toFixed(3)));
-			}
+		if (tabIndex == 0) {
+			setX1(parseFloat(((rawData.x / 100) * 20 - 10).toFixed(3)));
+			setY1(parseFloat(((rawData.y / 100) * 2 - 1).toFixed(3)));
+		} else if (tabIndex == 1) {
+			setX2(parseFloat(((rawData.x / 100) * 20 - 10).toFixed(3)));
+			setY2(parseFloat(((rawData.y / 100) * 2 - 1).toFixed(3)));
+		}
 
-			if (rawData.b1) {
-				console.log("Tab");
-				handleTab(1, tabIndex, setTabIndex);
-			}
-			setPreviousValue({ x: rawData.x, y: rawData.y });
+		if (rawData.b1) {
+			console.log("Tab");
+			handleTab(1, tabIndex, setTabIndex);
 		}
 	}, [rawData]);
 
 	return (
-		<>
-			<LaTeX>{findLineEquation({ x: x1, y: y1 }, { x: x2, y: y2 })}</LaTeX>
-			<Mafs height={350} viewBox={{ x: [-5, 5], y: [-3, 3] }}>
-				<Coordinates.Cartesian />
-				<Line.ThroughPoints point1={[x1, y1]} point2={[x2, y2]} />
-				<MovablePoint
-					color="#1EA3E3"
-					point={[x1, y1]}
-					onMove={(point: [number, number]) => {
-						setX1(point[0]);
-						setY1(point[1]);
-					}}
-				/>
-				<MovablePoint
-					color="#1EA3E3"
-					point={[x2, y2]}
-					onMove={(point: [number, number]) => {
-						setX2(point[0]);
-						setY2(point[1]);
-					}}
-				/>
-			</Mafs>
-		</>
+		<Mafs height={350} viewBox={{ x: [-5, 5], y: [-3, 3] }}>
+			<Coordinates.Cartesian />
+			<Line.ThroughPoints point1={[x1, y1]} point2={[x2, y2]} />
+			<MovablePoint
+				color="#1EA3E3"
+				point={[x1, y1]}
+				onMove={(point: [number, number]) => {
+					setX1(point[0]);
+					setY1(point[1]);
+				}}
+			/>
+			<MovablePoint
+				color="#1EA3E3"
+				point={[x2, y2]}
+				onMove={(point: [number, number]) => {
+					setX2(point[0]);
+					setY2(point[1]);
+				}}
+			/>
+		</Mafs>
 	);
 }
 
@@ -164,7 +156,6 @@ export function LineThroughPoints() {
 
 export function FancyParabola() {
 	const rawData = React.useContext(SerialContext);
-	const [previousValue, setPreviousValue] = React.useState({ x: 0, y: 0 });
 
 	const [tabIndex, setTabIndex] = React.useState(0);
 
@@ -175,20 +166,17 @@ export function FancyParabola() {
 	let [y3, setY3] = React.useState(-1);
 
 	React.useEffect(() => {
-		if (previousValue.x != rawData.x && previousValue.y != rawData.y) {
-			if (tabIndex == 0) {
-				setX1(parseFloat(((rawData.x / 100) * 20 - 10).toFixed(3)));
-			} else if (tabIndex == 1) {
-				setX2(parseFloat(((rawData.x / 100) * 20 - 10).toFixed(3)));
-			} else if (tabIndex == 2) {
-				setY3(parseFloat(((rawData.y / 100) * 6 - 3).toFixed(3)));
-			}
+		if (tabIndex == 0) {
+			setX1(parseFloat(((rawData.x / 100) * 20 - 10).toFixed(3)));
+		} else if (tabIndex == 1) {
+			setX2(parseFloat(((rawData.x / 100) * 20 - 10).toFixed(3)));
+		} else if (tabIndex == 2) {
+			setY3(parseFloat(((rawData.y / 100) * 6 - 3).toFixed(3)));
+		}
 
-			if (rawData.b1) {
-				console.log("Tab");
-				handleTab(2, tabIndex, setTabIndex);
-			}
-			setPreviousValue({ x: rawData.x, y: rawData.y });
+		if (rawData.b1) {
+			console.log("Tab");
+			handleTab(2, tabIndex, setTabIndex);
 		}
 	}, [rawData]);
 
@@ -210,37 +198,34 @@ export function FancyParabola() {
 	const fn = (x: number) => (x - x1) * (x - x2);
 
 	return (
-		<>
-			<LaTeX>{findQuadraticEquation(x1, x2, { y: y3 })}</LaTeX>
-			<Mafs height={350}>
-				<Coordinates.Cartesian subdivisions={2} />
+		<Mafs height={350}>
+			<Coordinates.Cartesian subdivisions={2} />
 
-				<Plot.OfX y={(x) => (y3 * fn(x)) / fn(mid)} />
+			<Plot.OfX y={(x) => (y3 * fn(x)) / fn(mid)} />
+			<MovablePoint
+				point={[x1,0]}
+				color="#1EA3E3"
+				onMove={(point) => {
+					setX1(point[0]);
+				}}
+			/>
+			<MovablePoint
+				point={[x2, 0]}
+				color="#1EA3E3"
+				onMove={(point) => {
+					setX2(point[0]);
+				}}
+			/>
+			<Transform translate={[(x1 + x2) / 2, 0]}>
 				<MovablePoint
-					point={[x1, 0]}
+					point={[0, y3]}
 					color="#1EA3E3"
 					onMove={(point) => {
-						setX1(point[0]);
+						setY3(point[1]);
 					}}
 				/>
-				<MovablePoint
-					point={[x2, 0]}
-					color="#1EA3E3"
-					onMove={(point) => {
-						setX2(point[0]);
-					}}
-				/>
-				<Transform translate={[(x1 + x2) / 2, 0]}>
-					<MovablePoint
-						point={[0, y3]}
-						color="#1EA3E3"
-						onMove={(point) => {
-							setY3(point[1]);
-						}}
-					/>
-				</Transform>
-			</Mafs>
-		</>
+			</Transform>
+		</Mafs>
 	);
 }
 
@@ -248,7 +233,6 @@ export function FancyParabola() {
 
 export function BezierCurves() {
 	const rawData = React.useContext(SerialContext);
-	const [previousValue, setPreviousValue] = React.useState({ x: 0, y: 0 });
 
 	const [tabIndex, setTabIndex] = React.useState(0);
 
@@ -267,26 +251,23 @@ export function BezierCurves() {
 	//mappings
 
 	React.useEffect(() => {
-		if (previousValue.x != rawData.x && previousValue.y != rawData.y) {
-			if (tabIndex == 0) {
-				rawData.x ? setX1(parseFloat(((rawData.x / 100) * 30 - 15).toFixed(3))) : null;
-				rawData.y ? setY1(parseFloat(((rawData.y / 100) * 8 - 4).toFixed(3))) : null;
-			} else if (tabIndex == 1) {
-				rawData.x ? setX2(parseFloat(((rawData.x / 100) * 30 - 15).toFixed(3))) : null;
-				rawData.y ? setY2(parseFloat(((rawData.y / 100) * 8 - 4).toFixed(3))) : null;
-			} else if (tabIndex == 2) {
-				rawData.x ? setX3(parseFloat(((rawData.x / 100) * 30 - 15).toFixed(3))) : null;
-				rawData.y ? setY3(parseFloat(((rawData.y / 100) * 8 - 4).toFixed(3))) : null;
-			} else if (tabIndex == 3) {
-				rawData.x ? setX4(parseFloat(((rawData.x / 100) * 30 - 15).toFixed(3))) : null;
-				rawData.y ? setY4(parseFloat(((rawData.y / 100) * 8 - 4).toFixed(3))) : null;
-			}
+		if (tabIndex == 0) {
+			rawData.x ? setX1(parseFloat(((rawData.x / 100) * 30 - 15).toFixed(3))) : null;
+			rawData.y ? setY1(parseFloat(((rawData.y / 100) * 8 - 4).toFixed(3))) : null;
+		} else if (tabIndex == 1) {
+			rawData.x ? setX2(parseFloat(((rawData.x / 100) * 30 - 15).toFixed(3))) : null;
+			rawData.y ? setY2(parseFloat(((rawData.y / 100) * 8 - 4).toFixed(3))) : null;
+		} else if (tabIndex == 2) {
+			rawData.x ? setX3(parseFloat(((rawData.x / 100) * 30 - 15).toFixed(3))) : null;
+			rawData.y ? setY3(parseFloat(((rawData.y / 100) * 8 - 4).toFixed(3))) : null;
+		} else if (tabIndex == 3) {
+			rawData.x ? setX4(parseFloat(((rawData.x / 100) * 30 - 15).toFixed(3))) : null;
+			rawData.y ? setY4(parseFloat(((rawData.y / 100) * 8 - 4).toFixed(3))) : null;
+		}
 
-			if (rawData.b1) {
-				console.log("Tab");
-				handleTab(3, tabIndex, setTabIndex);
-			}
-			setPreviousValue({ x: rawData.x, y: rawData.y });
+		if (rawData.b1) {
+			console.log("Tab");
+			handleTab(3, tabIndex, setTabIndex);
 		}
 	}, [rawData]);
 
@@ -422,7 +403,6 @@ export function BezierCurves() {
 
 export function RiemannSum() {
 	const rawData = React.useContext(SerialContext);
-	const [previousValue, setPreviousValue] = React.useState({ x: 0, y: 0 });
 
 	const [tabIndex, setTabIndex] = React.useState(0);
 
@@ -439,24 +419,21 @@ export function RiemannSum() {
 	const maxNumPartitions = 200;
 
 	React.useEffect(() => {
-		if (previousValue.x != rawData.x && previousValue.y != rawData.y) {
-			if (tabIndex == 0) {
-				rawData.y ? setLifyY1(parseFloat(((rawData.y / 100) * 10 - 3).toFixed(3))) : null;
-			} else if (tabIndex == 1) {
-				rawData.x ? setX2(parseFloat(((rawData.x / 100) * 48 - 24).toFixed(3))) : null;
-			} else if (tabIndex == 2) {
-				rawData.x ? setX3(parseFloat(((rawData.x / 100) * 48 - 24).toFixed(3))) : null;
-			}
+		if (tabIndex == 0) {
+			rawData.y ? setLifyY1(parseFloat(((rawData.y / 100) * 10 - 3).toFixed(3))) : null;
+		} else if (tabIndex == 1) {
+			rawData.x ? setX2(parseFloat(((rawData.x / 100) * 48 - 24).toFixed(3))) : null;
+		} else if (tabIndex == 2) {
+			rawData.x ? setX3(parseFloat(((rawData.x / 100) * 48 - 24).toFixed(3))) : null;
+		}
 
-			if (rawData.b1) {
-				console.log("Tab");
-				handleTab(2, tabIndex, setTabIndex);
-			}
+		if (rawData.b1) {
+			console.log("Tab");
+			handleTab(2, tabIndex, setTabIndex);
+		}
 
-			if (rawData.z) {
-				setNumPartitions((rawData.z / 100) * maxNumPartitions);
-			}
-			setPreviousValue({ x: rawData.x, y: rawData.y });
+		if (rawData.z) {
+			setNumPartitions((rawData.z / 100) * maxNumPartitions);
 		}
 	}, [rawData]);
 
