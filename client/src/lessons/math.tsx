@@ -82,7 +82,7 @@ export function LineThroughPoints() {
 	let [x2, setX2] = React.useState(2);
 	let [y2, setY2] = React.useState(1);
 	React.useEffect(() => {
-		if (previousValue.x != rawData.x && previousValue.y != rawData.y) {
+		if (previousValue.x != rawData.x || previousValue.y != rawData.y) {
 			if (tabIndex == 0) {
 				setX1(parseFloat(((rawData.x / 100) * 20 - 10).toFixed(3)));
 				setY1(parseFloat(((rawData.y / 100) * 2 - 1).toFixed(3)));
@@ -98,6 +98,10 @@ export function LineThroughPoints() {
 			setPreviousValue({ x: rawData.x, y: rawData.y });
 		}
 	}, [rawData]);
+
+	React.useEffect(() => {
+		handleTab(0, 0, setTabIndex);
+	}, []);
 
 	return (
 		<>
@@ -175,7 +179,7 @@ export function FancyParabola() {
 	let [y3, setY3] = React.useState(-1);
 
 	React.useEffect(() => {
-		if (previousValue.x != rawData.x && previousValue.y != rawData.y) {
+		if (previousValue.x != rawData.x || previousValue.y != rawData.y) {
 			if (tabIndex == 0) {
 				setX1(parseFloat(((rawData.x / 100) * 20 - 10).toFixed(3)));
 			} else if (tabIndex == 1) {
@@ -191,6 +195,10 @@ export function FancyParabola() {
 			setPreviousValue({ x: rawData.x, y: rawData.y });
 		}
 	}, [rawData]);
+
+	React.useEffect(() => {
+		handleTab(0, 0, setTabIndex);
+	}, []);
 
 	// const a = useMovablePoint([-1, 0], {
 	// 	constrain: "horizontal",
@@ -267,7 +275,7 @@ export function BezierCurves() {
 	//mappings
 
 	React.useEffect(() => {
-		if (previousValue.x != rawData.x && previousValue.y != rawData.y) {
+		if (previousValue.x != rawData.x || previousValue.y != rawData.y) {
 			if (tabIndex == 0) {
 				rawData.x ? setX1(parseFloat(((rawData.x / 100) * 30 - 15).toFixed(3))) : null;
 				rawData.y ? setY1(parseFloat(((rawData.y / 100) * 8 - 4).toFixed(3))) : null;
@@ -289,6 +297,10 @@ export function BezierCurves() {
 			setPreviousValue({ x: rawData.x, y: rawData.y });
 		}
 	}, [rawData]);
+
+	React.useEffect(() => {
+		handleTab(0, 0, setTabIndex);
+	}, []);
 
 	function xyFromBernsteinPolynomial(p1: vec.Vector2, c1: vec.Vector2, c2: vec.Vector2, p2: vec.Vector2, t: number) {
 		return [vec.scale(p1, -(t ** 3) + 3 * t ** 2 - 3 * t + 1), vec.scale(c1, 3 * t ** 3 - 6 * t ** 2 + 3 * t), vec.scale(c2, -3 * t ** 3 + 3 * t ** 2), vec.scale(p2, t ** 3)].reduce(vec.add, [0, 0]);
@@ -439,7 +451,7 @@ export function RiemannSum() {
 	const maxNumPartitions = 200;
 
 	React.useEffect(() => {
-		if (previousValue.x != rawData.x && previousValue.y != rawData.y) {
+		if (previousValue.x != rawData.x || previousValue.y != rawData.y) {
 			if (tabIndex == 0) {
 				rawData.y ? setLifyY1(parseFloat(((rawData.y / 100) * 10 - 3).toFixed(3))) : null;
 			} else if (tabIndex == 1) {
@@ -459,6 +471,10 @@ export function RiemannSum() {
 			setPreviousValue({ x: rawData.x, y: rawData.y });
 		}
 	}, [rawData]);
+
+	React.useEffect(() => {
+		handleTab(0, 0, setTabIndex);
+	}, []);
 
 	interface Partition {
 		polygon: [number, number][];

@@ -55,7 +55,7 @@ export function ProjectileMotion() {
 	}, [restingX, restingY, stop]);
   
 	React.useEffect(() => {
-    if (previousValue.x != rawData.x && previousValue.y != rawData.y) {
+    if (previousValue.x != rawData.x || previousValue.y != rawData.y) {
       setX1(parseFloat(((rawData.x / 100) * 18 - 8).toFixed(3)));
       setY1(parseFloat(((rawData.y / 100) * 4).toFixed(3)));
       setG(parseFloat((rawData.z > 0 ? rawData.z / 100 : 0.981 * 10).toFixed(3)));

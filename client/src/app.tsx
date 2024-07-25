@@ -61,28 +61,55 @@ export default function () {
 	let [currentLesson, setCurrentLesson] = useState<number>(0);
 	let [rawData, setRawData] = useState<any>({ x: 0, y: 0, z: 0, a: 0, b: 0, c: 0, b1: false, b2: false, b3: false, b4: false });
 
+	const [carouselQue, setQue] = useState<string | null>(null);
+
 	const [emblaRef, emblaApi] = useEmblaCarousel();
 
 	useEffect(() => {
 		socket.on("serial_data", (data) => {
 			setRawData(JSON.parse(data));
-			if (data.b3) {
-				if (emblaApi?.canScrollPrev()) {
-					emblaApi.scrollPrev();
-				} else {
-					emblaApi?.scrollTo(lessons.length - 1);
-				}
-			} else if (data.b4) {
-				if (emblaApi?.canScrollNext()) {
-					emblaApi.scrollNext();
-				} else {
-					emblaApi?.scrollTo(0);
-				}
+			// console.log({b4:JSON.parse(data)});
+
+			if (JSON.parse(data).b3) {
+				setQue("prev");
+			}
+			if (JSON.parse(data).b4) {
+				setQue("next");
 			}
 		});
 
-		return () => {};
+		// return () => {};
 	}, [socket]);
+
+	useEffect(() => {
+		console.log("que triggered");
+
+		if (emblaApi && carouselQue != null) {
+			console.log("api is defined");
+
+			if (carouselQue == "prev") {
+				console.log("prev");
+				if (emblaApi.canScrollPrev()) {
+					setCurrentLesson(currentLesson - 1);
+					emblaApi.scrollPrev();
+				} else {
+					setCurrentLesson(lessons.length - 1);
+					emblaApi.scrollTo(lessons.length - 1);
+				}
+			}
+			if (carouselQue == "next") {
+				console.log("next");
+
+				if (emblaApi.canScrollNext()) {
+					setCurrentLesson(currentLesson + 1);
+					emblaApi.scrollNext();
+				} else {
+					setCurrentLesson(0);
+					emblaApi.scrollTo(0);
+				}
+			}
+		}
+	}, [emblaApi, carouselQue]);
 	return (
 		<div className="flex flex-col gap-5 h-screen max-h-screen">
 			<div className="flex justify-center overflow-x-hidden gap-5 mt-5">

@@ -85,6 +85,9 @@ io.on("connection", (socket) => {
 						if (Object.keys(previousValues).includes(dataKey)) {
 							// console.log({previousValue});
 							formattedPacket[dataKey] = dataValue != previousValue ? true : false;
+							if (dataValue != previousValue){
+								console.log({button: dataKey, currentValue: dataValue, previousValue, pressed:formattedPacket[dataKey]});
+							}
 						} else {
 							formattedPacket[dataKey] = false;
 						}
@@ -94,7 +97,8 @@ io.on("connection", (socket) => {
 					}
 				});
 				// console.log(formattedPacket);
-				console.log(previousValues.b1, formattedPacket.b1);
+				// console.log({previous: previousValues.b3, current: formattedPacket.b3, value: formattedPacket.b3});
+				// console.log({previous: previousValues.b4, current: formattedPacket.b4, value: formattedPacket.b4});
 				resolve(socket.emit("serial_data", JSON.stringify(formattedPacket)));
 			}, 1000 * packetIndex);
 		});
