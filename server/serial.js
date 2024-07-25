@@ -34,8 +34,7 @@ parser.on("data", function (data) {
   console.log(data.toString());
 
 });
-*/  
-
+*/
 
 ///////////////////// server
 
@@ -92,7 +91,7 @@ io.on("connection", (socket) => {
 		});
 		// console.log(formattedPacket);
 		// console.log(previousValues.b1, formattedPacket.b1);
-
+		// resolve(socket.emit("serial_data", JSON.stringify(formattedPacket)));
 		socket.emit("serial_data", JSON.stringify(formattedPacket));
 		console.log("", data);
 	});
