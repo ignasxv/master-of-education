@@ -93,7 +93,6 @@ io.on("connection", (socket) => {
 		// console.log(formattedPacket);
 		// console.log(previousValues.b1, formattedPacket.b1);
 		socket.emit("serial_data", JSON.stringify(formattedPacket));
-		socket.emit("serial_data", data);
 		console.log("", data);
 	});
 });
