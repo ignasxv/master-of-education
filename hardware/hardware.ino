@@ -1,10 +1,19 @@
-#include <Arduino.h>
+// #include <Arduino.h>
+#include <math.h>
+
 
 int globalCountTracker = 0;
-boolean testMode = true;
+boolean testMode = false;
 #define BAUD_RATE 9600
 #define efficientMode false
 
+struct Bound{
+  const float s_lower = -50.00; 
+  const float s_upper = 50.00;
+  const float r_lower = 0.00;
+  const float r_upper = 1024.0;
+};
+Bound bound; 
 
 #define NUM_OF_BUTTONS  4
 #define NUM_OF_POTMETERS 6
@@ -32,7 +41,7 @@ struct Button {
 
 // Button instance
 Button buttons[NUM_OF_BUTTONS]; 
-int buttonsPins[NUM_OF_BUTTONS] = {33, 32, 35, 34}; 
+int buttonsPins[NUM_OF_BUTTONS] = {7, 6, 4, 5}; 
 String buttonLabels[NUM_OF_BUTTONS] = {"B1", "B2", "B3", "B4"};
 
 
@@ -45,7 +54,7 @@ struct PontMeter {
 
   PontMeter() {}
 
-  PontMeter(int pVal, int cVal, int p, String l) 
+  PontMeter(float pVal, float cVal, int p, String l) 
     : previousVal(pVal), currentVal(cVal), pin(p), label(l) {
 
       // Print the constructed values in the SerialMonitor during testMode
@@ -62,7 +71,7 @@ struct PontMeter {
 // Pontmeter instance
 PontMeter pontMeters[NUM_OF_POTMETERS];
 
-int pontMeterPins[NUM_OF_POTMETERS] = {13, 12, 14, 27, 26, 25}; 
+int pontMeterPins[NUM_OF_POTMETERS] = {4, 5, 3, 0, 1, 2}; 
 String pontMeterLabels[NUM_OF_POTMETERS] = {"X", "Y", "Z", "A", "B", "C"};
 
 
@@ -71,8 +80,14 @@ void resetTracker(){
   globalCountTracker = 0;
 }
 
+float mapToRange(float value, float fromLow, float fromHigh, float toLow, float toHigh) {
+    return (value - fromLow) * (toHigh - toLow) / (fromHigh - fromLow) + toLow;
+}
+
+
 // The setup function
 void setup() {
+  pinMode(12, OUTPUT);
   Serial.begin(BAUD_RATE);
 
   // Initialize PotMeter array
@@ -105,13 +120,13 @@ boolean updateReadings(){
 
       // updating potentiometer
       PontMeter* pot = &pontMeters[i];
-      pot->currentVal = round( analogRead(pot->pin) / 4096.0 * 100 );
+      pot->currentVal = analogRead(pot->pin) / bound.r_upper * 100;
+      // pot->currentVal = map( analogRead(pot->pin), bound.r_lower, bound.r_upper, bound.s_lower, bound.s_upper );
 
       if( pot->previousVal != pot->currentVal  ){
         pot->previousVal = pot->currentVal;
 
-        if(efficientMode) Serial.println( "{" + pot->label + ":" + String(pot->currentVal) + "}" );
-
+        if(efficientMode) Serial.println( "{" + pot->label + ":" + String( pot->currentVal ) + "}" );
         isChange = true;
       }
 
@@ -173,7 +188,8 @@ void loop() {
     printReadings(); 
   }
 
-  digitalWrite(2, buttons[0].state);
+  digitalWrite(12, buttons[2].state);
+  // Serial.println(buttons[2].state);
 
-  delay(100);
+  delay(200);
 }
