@@ -3,7 +3,7 @@
 
 
 int globalCountTracker = 0;
-boolean testMode = true;
+boolean testMode = false;
 #define BAUD_RATE 9600
 #define efficientMode false
 
@@ -41,14 +41,14 @@ struct Button {
 
 // Button instance
 Button buttons[NUM_OF_BUTTONS]; 
-int buttonsPins[NUM_OF_BUTTONS] = {4, 5, 6, 7}; 
+int buttonsPins[NUM_OF_BUTTONS] = {7, 6, 4, 5}; 
 String buttonLabels[NUM_OF_BUTTONS] = {"B1", "B2", "B3", "B4"};
 
 
 // Pontementer object**
 struct PontMeter {
-  float previousVal = 0;
-  float currentVal = 0;
+  int previousVal = 0;
+  int currentVal = 0;
   int pin;
   String label;
 
@@ -71,7 +71,7 @@ struct PontMeter {
 // Pontmeter instance
 PontMeter pontMeters[NUM_OF_POTMETERS];
 
-int pontMeterPins[NUM_OF_POTMETERS] = {0, 3, 4, 1, 2, 5}; 
+int pontMeterPins[NUM_OF_POTMETERS] = {4, 5, 3, 0, 1, 2}; 
 String pontMeterLabels[NUM_OF_POTMETERS] = {"X", "Y", "Z", "A", "B", "C"};
 
 
@@ -120,8 +120,8 @@ boolean updateReadings(){
 
       // updating potentiometer
       PontMeter* pot = &pontMeters[i];
-      // pot->currentVal = analogRead(pot->pin)*100;
-      pot->currentVal = map( analogRead(pot->pin), bound.r_lower, bound.r_upper, bound.s_lower, bound.s_upper );
+      pot->currentVal = analogRead(pot->pin) / bound.r_upper * 100;
+      // pot->currentVal = map( analogRead(pot->pin), bound.r_lower, bound.r_upper, bound.s_lower, bound.s_upper );
 
       if( pot->previousVal != pot->currentVal  ){
         pot->previousVal = pot->currentVal;

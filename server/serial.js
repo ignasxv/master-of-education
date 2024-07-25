@@ -29,7 +29,7 @@ port.on("open", function () {
 const parser = port.pipe(new ReadlineParser({ delimiter: "\r\n" }));
 
 // Event listener for serial data
-
+/*
 parser.on("data", function (data) {
   console.log(data.toString());
 
@@ -91,8 +91,8 @@ io.on("connection", (socket) => {
 		});
 		// console.log(formattedPacket);
 		// console.log(previousValues.b1, formattedPacket.b1);
-		resolve(socket.emit("serial_data", JSON.stringify(formattedPacket)));
-		socket.emit("serial_data", data);
+		// resolve(socket.emit("serial_data", JSON.stringify(formattedPacket)));
+		socket.emit("serial_data", JSON.stringify(formattedPacket));
 		console.log("", data);
 	});
 });
