@@ -1,7 +1,7 @@
 const { SerialPort } = require("serialport");
 const { ReadlineParser } = require("@serialport/parser-readline");
 
-const PORTS = { linux: "/dev/ttyACM0", windows: "COM7" };
+const PORTS = { linux: "/dev/ttyACM0", windows: "COM3" };
 const BAUD_RATE = 9600;
 
 const port = new SerialPort({
@@ -92,6 +92,7 @@ io.on("connection", (socket) => {
 		});
 		// console.log(formattedPacket);
 		// console.log(previousValues.b1, formattedPacket.b1);
+
 		socket.emit("serial_data", JSON.stringify(formattedPacket));
 		console.log("", data);
 	});
