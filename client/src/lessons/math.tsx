@@ -91,11 +91,11 @@ export function LineThroughPoints() {
 				setY2(parseFloat(((rawData.y / 100) * 2 - 1).toFixed(3)));
 			}
 
-			if (rawData.b1) {
-				console.log("Tab");
-				handleTab(1, tabIndex, setTabIndex);
-			}
 			setPreviousValue({ x: rawData.x, y: rawData.y });
+		}
+		if (rawData.b1) {
+			console.log("Tab");
+			handleTab(1, tabIndex, setTabIndex);
 		}
 	}, [rawData]);
 
@@ -188,11 +188,11 @@ export function FancyParabola() {
 				setY3(parseFloat(((rawData.y / 100) * 6 - 3).toFixed(3)));
 			}
 
-			if (rawData.b1) {
-				console.log("Tab");
-				handleTab(2, tabIndex, setTabIndex);
-			}
 			setPreviousValue({ x: rawData.x, y: rawData.y });
+		}
+		if (rawData.b1) {
+			console.log("Tab");
+			handleTab(2, tabIndex, setTabIndex);
 		}
 	}, [rawData]);
 
@@ -290,11 +290,11 @@ export function BezierCurves() {
 				rawData.y ? setY4(parseFloat(((rawData.y / 100) * 8 - 4).toFixed(3))) : null;
 			}
 
-			if (rawData.b1) {
-				console.log("Tab");
-				handleTab(3, tabIndex, setTabIndex);
-			}
 			setPreviousValue({ x: rawData.x, y: rawData.y });
+		}
+		if (rawData.b1) {
+			console.log("Tab");
+			handleTab(3, tabIndex, setTabIndex);
 		}
 	}, [rawData]);
 
@@ -460,15 +460,16 @@ export function RiemannSum() {
 				rawData.x ? setX3(parseFloat(((rawData.x / 100) * 48 - 24).toFixed(3))) : null;
 			}
 
-			if (rawData.b1) {
-				console.log("Tab");
-				handleTab(2, tabIndex, setTabIndex);
-			}
-
-			if (rawData.z) {
-				setNumPartitions((rawData.z / 100) * maxNumPartitions);
-			}
+			
 			setPreviousValue({ x: rawData.x, y: rawData.y });
+		}
+		if (rawData.b1) {
+			console.log("Tab");
+			handleTab(2, tabIndex, setTabIndex);
+		}
+
+		if (rawData.z) {
+			setNumPartitions((rawData.z / 100) * maxNumPartitions);
 		}
 	}, [rawData]);
 

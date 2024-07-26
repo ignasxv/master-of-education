@@ -19,8 +19,8 @@ export function ProjectileMotion() {
 	// let x1 = parseFloat(((rawData.x / 100 * 8) - 3).toFixed(3));
 	// let y1 = parseFloat(((rawData.y / 100 * 4) -2).toFixed(3));
   
-	let [x1, setX1] = React.useState(0);
-	let [y1, setY1] = React.useState(0);
+	let [x1, setX1] = React.useState(-1);
+	let [y1, setY1] = React.useState(1.5);
   
 	const xSpan = 1.75;
 	const ySpan = 1.75;

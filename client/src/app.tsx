@@ -96,6 +96,7 @@ export default function () {
 					setCurrentLesson(lessons.length - 1);
 					emblaApi.scrollTo(lessons.length - 1);
 				}
+				setQue(null);
 			}
 			if (carouselQue == "next") {
 				console.log("next");
@@ -107,6 +108,7 @@ export default function () {
 					setCurrentLesson(0);
 					emblaApi.scrollTo(0);
 				}
+				setQue(null);
 			}
 		}
 	}, [emblaApi, carouselQue]);
