@@ -46,6 +46,8 @@ export function ProjectileMotion() {
     // Reset the ball's whenever the resting position changes
   }, [restingX, restingY, stop]);
 
+  const [showPath, setShowPath] = React.useState(false);
+
   return (
     <>
       <Mafs
@@ -56,7 +58,6 @@ export function ProjectileMotion() {
           y: [1 - ySpan, 1 + ySpan],
         }}
       >
-
         <Polygon
           points={[
             [-100, 0],
@@ -71,12 +72,14 @@ export function ProjectileMotion() {
 
         {yVelocity > 0 && (
           <>
-            <Plot.Parametric
-              xy={positionAtTime}
-              t={[0, timeOfFlight]}
-              opacity={0.4}
-              style="dashed"
-            />
+            {showPath && (
+              <Plot.Parametric
+                xy={positionAtTime}
+                t={[0, timeOfFlight]}
+                opacity={0.4}
+                style="dashed"
+              />
+            )}
             <Point x={restingX} y={restingY} opacity={0.5} />
           </>
         )}
@@ -89,31 +92,31 @@ export function ProjectileMotion() {
           className="transform-to-center"
           fill="white"
         >
-          t = {t.toFixed(2)}/{yVelocity > 0 ? timeOfFlight.toFixed(2) : "—"}{" "} seconds
+          t = {t.toFixed(2)}/{yVelocity > 0 ? timeOfFlight.toFixed(2) : "—"}{" "}
+          seconds
         </text>
 
-		<text
+        <text
           x={0}
           y={50}
           fontSize={20}
           className="transform-to-center"
           fill="white"
         >
-    	g = {g}
+          g = {g}
         </text>
 
-		<text
+        <text
           x={0}
           y={75}
           fontSize={20}
           className="transform-to-center"
           fill="white"
         >
-    	Initial Velocity = {velocityMag.toFixed(2)}
+          Initial Velocity = {velocityMag.toFixed(2)}
         </text>
 
         {initialVelocity.element}
-
       </Mafs>
 
       {/* These classnames are part of the Mafs docs website—they won't work for you. */}
@@ -131,6 +134,13 @@ export function ProjectileMotion() {
             onClick={stop}
           >
             Reset
+          </button>
+
+          <button
+            className="bg-zinc-400 text-zinc-900 font-bold  px-4 py-1 rounded-sm"
+            onClick={() => setShowPath(!showPath)} 
+          >
+            Path
           </button>
         </div>
       </PortalActionButtons>

@@ -1,3 +1,9 @@
+<<<<<<< Updated upstream
+=======
+#include <math.h>
+
+
+>>>>>>> Stashed changes
 int globalCountTracker = 0;
 boolean testMode = true;
 #define BAUD_RATE 9600
