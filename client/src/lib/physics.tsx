@@ -73,49 +73,79 @@ export function ProjectileMotion() {
 		}
 	}, [rawData.b1, rawData.b2]);
 
-	return (
-		<>
-			<Mafs
-				pan={true}
-        zoom={true}
-				height={300}
-				viewBox={{
-					x: [1 - xSpan, 1 + xSpan],
-					y: [1 - ySpan, 1 + ySpan],
-				}}
-			>
-				<Polygon
-					points={[
-						[-100, 0],
-						[100, 0],
-						[100, -100],
-						[-100, -100],
-					]}
-					color="#1EA3E3"
-				/>
+  const [showPath, setShowPath] = React.useState(false);
+
+  return (
+    <>
+      <Mafs
+        pan={false}
+        height={300}
+        viewBox={{
+          x: [1 - xSpan, 1 + xSpan],
+          y: [1 - ySpan, 1 + ySpan],
+        }}
+      >
+        <Polygon
+          points={[
+            [-100, 0],
+            [100, 0],
+            [100, -100],
+            [-100, -100],
+          ]}
+          color="#1EA3E3"
+        />
 
 				<Vector tip={[xVelocity / vectorScale, yVelocity / vectorScale]} />
 				{/* <Coordinates.Cartesian /> */}
 
-				{yVelocity > 0 && (
-					<>
-						<Plot.Parametric xy={positionAtTime} t={[0, timeOfFlight]} opacity={0.4} style="dashed" />
-						<Point x={restingX} y={restingY} opacity={0.5} />
-					</>
-				)}
+        {yVelocity > 0 && (
+          <>
+            {showPath && (
+              <Plot.Parametric
+                xy={positionAtTime}
+                t={[0, timeOfFlight]}
+                opacity={0.4}
+                style="dashed"
+              />
+            )}
+            <Point x={restingX} y={restingY} opacity={0.5} />
+          </>
+        )}
 
-				<Point x={positionAtTime(t)[0]} y={positionAtTime(t)[1]} />
-				<text x={0} y={25} fontSize={20} className="transform-to-center" fill="white">
-					t = {t.toFixed(2)}/{yVelocity > 0 ? timeOfFlight.toFixed(2) : "—"} seconds
-				</text>
+        <Point x={positionAtTime(t)[0]} y={positionAtTime(t)[1]} />
+        <text
+          x={0}
+          y={25}
+          fontSize={20}
+          className="transform-to-center"
+          fill="white"
+        >
+          t = {t.toFixed(2)}/{yVelocity > 0 ? timeOfFlight.toFixed(2) : "—"}{" "}
+          seconds
+        </text>
 
 				<text x={0} y={50} fontSize={20} className="transform-to-center" fill="white">
 					g = {g}
 				</text>
+        <text
+          x={0}
+          y={50}
+          fontSize={20}
+          className="transform-to-center"
+          fill="white"
+        >
+          g = {g}
+        </text>
 
-				<text x={0} y={75} fontSize={20} className="transform-to-center" fill="white">
-					Initial Velocity = {velocityMag.toFixed(2)}
-				</text>
+        <text
+          x={0}
+          y={75}
+          fontSize={20}
+          className="transform-to-center"
+          fill="white"
+        >
+          Initial Velocity = {velocityMag.toFixed(2)}
+        </text>
 
 				<MovablePoint
 					point={[x1, y1]}
@@ -124,8 +154,7 @@ export function ProjectileMotion() {
 						setX1(parseFloat(point[0].toFixed(3)));
 						setY1(parseFloat(point[1].toFixed(3)));
 					}}
-				/>
-			</Mafs>
+				/>			</Mafs>
 
 			{/* These classnames are part of the Mafs docs website—they won't work for you. */}
 			<PortalActionButtons>
@@ -136,6 +165,13 @@ export function ProjectileMotion() {
 					<button className="bg-zinc-400 text-zinc-900 font-bold  px-4 py-1 rounded-sm" onClick={stop}>
 						Reset
 					</button>
+
+          <button
+            className="bg-zinc-400 text-zinc-900 font-bold  px-4 py-1 rounded-sm"
+            onClick={() => setShowPath(!showPath)} 
+          >
+            Path
+          </button>
 				</div>
 				<div className="flex-1 flex-col justify-center max-w-xs">
 					<label htmlFor="default-range" className="block mb-0.5 text-sm font-medium text-zinc-900 dark:text-white">
